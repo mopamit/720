@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ממשק צפייה במשאבי מדעים</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f4f6;
+            height: 100vh;
+            overflow: hidden; /* Prevent body scroll */
+        }
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8; 
+        }
+    </style>
+</head>
+<body class="text-gray-800 flex flex-col">
+
+    <!-- Header (Fixed Height) -->
+    <header class="bg-white px-4 py-2 shadow-sm border-b border-gray-200 flex justify-between items-center gap-4 shrink-0 z-20 h-14">
+        <div class="flex items-center gap-2">
+            <button id="btnPrev" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                הקודם
+            </button>
+            <button id="btnNext" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1">
+                הבא
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <span id="counter" class="text-xs text-gray-500 font-mono mx-2">טוען...</span>
+        </div>
+        
+        <h1 id="mainHeaderTitle" class="text-lg font-bold text-gray-800 truncate flex-1 text-center">טוען כותרת...</h1>
+        
+        <div class="flex items-center gap-2">
+             <span class="bg-indigo-50 text-indigo-700 text-xs px-2 py-1 rounded border border-indigo-100 font-mono" id="itemId">ID</span>
+             <a id="externalLinkBtn" href="#" target="_blank" class="text-gray-500 hover:text-blue-600 transition" title="פתח בחלון חדש">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+             </a>
+        </div>
+    </header>
+
+    <!-- Main Content (Flex Column) -->
+    <main id="mainContent" class="hidden flex-1 flex flex-col min-h-0 bg-gray-100">
+        
+        <!-- Top Half: Content (50%) -->
+        <div class="h-[50%] w-full relative shrink-0">
+            <div class="iframe-container flex items-center justify-center relative">
+                <div id="iframePlaceholder" class="absolute inset-0 flex items-center justify-center text-gray-400 z-0 pointer-events-none">
+                    <span class="flex flex-col items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="12" cy="12" r="5"></circle><path d="M12 12V2"></path></svg>
+                        טוען תצוגה מקדימה...
+                    </span>
+                </div>
+                <iframe id="contentFrame" src="" class="z-10 bg-white" sandbox="allow-forms allow-scripts allow-same-origin allow-popups"></iframe>
+            </div>
+        </div>
+
+        <!-- Bottom Half: Metadata (Remaining Space) -->
+        <div class="flex-1 overflow-y-auto bg-white border-t border-gray-300 w-full p-6 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+            
+            <!-- Item Description -->
+            <div class="mb-6 pb-4 border-b border-gray-100">
+                <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">תיאור הפריט</h3>
+                <p id="itemDesc" class="text-gray-800 text-base leading-relaxed max-w-4xl"></p>
+            </div>
+
+            <!-- Metadata Grid -->
+            <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">פרטים נוספים</h3>
+            <div id="metadataList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4">
+                <!-- Dynamic content will be injected here -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Loading State -->
+    <div id="loading" class="flex-1 flex flex-col items-center justify-center text-center">
+        <div class="loader"></div>
+        <p class="text-gray-600 font-medium">טוען נתונים, אינדקסים ותרגומים...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="hidden flex-1 flex flex-col items-center justify-center text-center text-red-600">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-4"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <p id="errorMessage" class="font-bold">שגיאה בטעינת הנתונים</p>
+    </div>
+
+    <script>
+        // --- Configuration ---
+        const DATA_SHEET_ID = '1YKIfh8tMXnp83DQoNRQMGEH61qNbukyqbskufQXKRrY';
+        // Updated GID for Math Metadata
+        const DATA_GID = '911902053'; 
+        
+        // Indices
+        // Science/Subtopic Index (Existing - kept as fallback)
+        const SCIENCE_INDEX_ID = '1gqeucmOSQIi565kIoG1hUzOpT4VOriz6ehJfBbc8Ndo';
+        const SCIENCE_GID = '0'; 
+        
+        // Skills Index (External - kept as fallback)
+        const SKILLS_INDEX_ID = '1FlAzcibPOItnXUyTgN7Jmb-Kzm006K54qkrTNX7cdUQ';
+        const SKILLS_GID = '1661050144'; 
+
+        // Field Translations Sheet
+        const KEYS_SHEET_ID = '12PT72SuTLmt_ayAibMk9r4bEHrFUY10XCvFyc8605Eg';
+        const KEYS_GID = '911902053';
+
+        // --- MAPPING DICTIONARIES ---
+
+        // 1. Field Names (Keys) -> Hebrew Labels
+        const FIELD_LABELS = {
+            'title': 'כותרת',
+            'description': 'תיאור',
+            'contenttype': 'סוג תוכן',
+            'subject': 'תחום דעת',
+            'gradelevel': 'גיל',
+            'topic': 'שם נושא',
+            'subtopic': 'נושא ידע',
+            'prerequisitesubtopics': 'נושאי ידע מקדימים',
+            'skills': 'מיומנויות',
+            'manufacture': 'יצרן תוכן',
+            'priorbasedpractice': 'ידע מקדים',
+            'targetsector': 'אוכלוסיית יעד',
+            'targetaudience': 'קהל יעד',
+            'relativedifficulty': 'רמת קושי',
+            'depthlevel': 'רמת עומק',
+            'cognitivelevel': 'רמת חשיבה',
+            'languages': 'שפה',
+            'estimatedtimeinminutes': 'משך צפוי ללמידה'
+        };
+
+        // 2. Value Translations (Content)
+        const VALUE_MAPS = {
+            'targetsector': {
+                'State (General)': 'ממלכתי',
+                'State (Religious)': 'ממלכתי דתי',
+                'Druze': 'דרוזי',
+                'Special Education': 'חנ"מ',
+                'Orthodox': 'ממלכתי חרדי'
+            },
+            'targetaudience': {
+                'General': 'כללי',
+                'Excellent': 'מצוינות',
+                'Disadvantaged Populations': 'אוכלוסיות מוחלשות',
+                'Students with Special Needs': 'צרכים מיוחדים',
+                'At Risk Students': 'תלמידים בסיכון'
+            },
+            'depthlevel': {
+                'Core Curriculum Basic': 'בסיסי',
+                'Advanced': 'מתקדם',
+                'Enrichment': 'העשרה'
+            },
+            'cognitivelevel': {
+                'Remember': 'זכירה',
+                'Understand': 'הבנה',
+                'Apply': 'יישום',
+                'Analyze': 'ניתוח',
+                'Evaluate': 'הערכה',
+                'Create': 'יצירה'
+            },
+            'languages': {
+                'Hebrew': 'עברית',
+                'English': 'אנגלית',
+                'Arabic': 'ערבית'
+            }
+        };
+
+        // --- SKILLS DICTIONARY ---
+        const SKILLS_DICTIONARY = {
+            // --- MATH SKILLS (New) ---
+            // אוריינות מתמטית
+            'MOE.STEM.MATH.LITMATH-FORMULATE.001': 'ניסוח בעיות מתמטית',
+            'MOE.STEM.MATH.LITMATH-REPRESENT.002': 'ייצוג ומתן משמעות לתופעות מתמטיות',
+            'MOE.STEM.MATH.LITMATH-JUDGE.003': 'הערכת פתרונות מתמטיים',
+            
+            // יישום מתמטיקה
+            'MOE.STEM.MATH.APPLY-TOOLS.001': 'שימוש בכלים מתמטיים',
+            'MOE.STEM.MATH.APPLY-MODEL.002': 'בניית מודלים מתמטיים',
+            
+            // חשיבה מתמטית
+            'MOE.STEM.MATH.REASON-INFER.001': 'הסקת מסקנות לוגיות',
+            'MOE.STEM.MATH.REASON-JUSTIFY.002': 'נימוק טענות',
+            
+            // מיומנויות טכניות
+            'MOE.STEM.MATH.TECH-COMPUTE.001': 'ביצוע חישובים',
+            'MOE.STEM.MATH.TECH-GRAPH.002': 'ניתוח של גרפים',
+            
+            // יצירתיות
+            'MOE.STEM.MATH.CREATE-INNOVATE.001': 'פיתוח דרכי פתרון וייצוג חדשים',
+            'MOE.STEM.MATH.CRIT-VALIDATE.001': 'הערכת נכונות',
+            'MOE.STEM.MATH.CRIT-ERROR.002': 'זיהוי טעויות',
+            'MOE.STEM.MATH.PROBLEM-APPLY.001': 'יישום כלים מתמטיים לפתרון בעיות',
+
+            // --- SCIENCE SKILLS (Previous - Kept for safety or fallback) ---
+            'MOE.STEM.SCIENTIFIC.LITSCI-CONCEPTS.001': 'הבנת מושגים, תופעות ומונחים',
+            'MOE.STEM.SCIENTIFIC.LITSCI-APPLY.002': 'יישום מושגים מדעיים בהקשרים מגוונים',
+            'MOE.STEM.SCIENTIFIC.EXPLAIN-EVIDENCE.001': 'בניית הסברים מבוססי ראיות',
+            'MOE.STEM.SCIENTIFIC.EXPLAIN-DESCRIBE.002': 'תיאור תופעות במונחים מדעיים',
+            'MOE.STEM.SCIENTIFIC.INQUIRY-DESIGN.001': 'תכנון חקר וזיהוי משתנים',
+            'MOE.STEM.SCIENTIFIC.INQUIRY-VALIDATE.002': 'הערכת איכות ומהימנות של המחקר',
+            'MOE.STEM.SCIENTIFIC.ANALYZE-PATTERNS.001': 'ניתוח נתונים וזיהוי דפוסים',
+            'MOE.STEM.SCIENTIFIC.ANALYZE-INFER.002': 'גזירת מסקנות מבוססות ראיות',
+            'MOE.STEM.SCIENTIFIC.COMM-PRESENT.001': 'הצגת ממצאים בצורה ברורה',
+            'MOE.STEM.SCIENTIFIC.COMM-ARGUE.002': 'נימוק טענות על בסיס ראיות',
+            'MOE.STEM.SCIENTIFIC.EVALINFO-SOURCES.001': 'בחינת אמינות ואיכות של מידע מדעי',
+            'MOE.STEM.SCIENTIFIC.EVALINFO-DECIDE.002': 'שימוש במידע לקבלת החלטות',
+            'MOE.STEM.SCIENTIFIC.CREATE-INNOVATE.001': 'פיתוח רעיונות, ניסויים ופתרונות חדשים',
+            'MOE.STEM.SCIENTIFIC.CRIT-EVALUATE.001': 'בחינת טענות וזיהוי הטיות',
+            'MOE.STEM.SCIENTIFIC.CRIT-STRENGTH.002': 'הערכת חוזק מסקנות',
+            'MOE.STEM.SCIENTIFIC.PROBLEM-APPLY.001': 'יישום חשיבה מדעית לפתרון בעיות',
+
+            // --- CROSS SKILLS (Shared) ---
+            'MOE.STEM.CROSS.COMPUTE-DECOMPOSE.001': 'פירוק בעיות',
+            'MOE.STEM.CROSS.COMPUTE-ALGO.002': 'בניית אלגוריתמים',
+            'MOE.STEM.CROSS.INFO-FILTER.001': 'איתור והערכה',
+            'MOE.STEM.CROSS.INFO-REPRESENT.002': 'ייצוג ופרשנות',
+            'MOE.STEM.CROSS.VALUE-INNOVATE.001': 'יצירת רעיונות',
+            'MOE.STEM.CROSS.VALUE-INTEGRATE.002': 'אינטגרציה של ידע',
+            'MOE.STEM.CROSS.SELF-MANAGE.001': 'ניהול למידה',
+            'MOE.STEM.CROSS.SELF-DECIDE.002': 'קבלת החלטות',
+            'MOE.STEM.CROSS.SOCIAL-COLLAB.001': 'תקשורת ושיתוף פעולה',
+            'MOE.STEM.CROSS.SOCIAL-RESOLVE.002': 'פתרון קונפליקטים'
+        };
+
+        // --- MOE DICTIONARY ---
+        const MOE_DICTIONARY = {
+            // --- MATH (New) ---
+            // DOMAIN
+            'ALG': 'אלגברה',
+            'GEO': 'גיאומטריה',
+            'NUM': 'מספרים',
+            'UNC': 'אי ודאות',
+
+            // TOP
+            'EXPR': 'משתנים וביטויים אלגבריים',
+            'SIMPL': 'כינוס איברים ושוויון ביטויים', // Ambiguous with SUB below, handled by structure context
+            'EQNS': 'משוואות פשוטות',
+            'WPB': 'שאלות מילוליות פשוטות',
+            'WPI': 'שאלות אורייניות אינטגרטיביות',
+            'SOLID': 'תיבות ומנסרות',
+            'TRI': 'משולשים ומצולעים',
+            'ANG': 'זוויות וישרים',
+            'CIRC': 'קווים ומעגלים',
+            'COMP': 'צורות מורכבות',
+            'ARITH': 'חוקי חשבון',
+            'POW': 'חזקות ושורשים',
+            'SGN': 'מספרים חיוביים ושליליים',
+            'CRD': 'מערכת הצירים',
+            'MEAS': 'מדידות במערכת הצירים', // Ambiguous with SUB
+            'DATA': 'אי ודאות',
+
+            // SUB
+            'VAR': 'משתנה',
+            'SYM': 'סימנים מתמטיים',
+            'TYPES': 'סוגי ביטויים/צורות', // Ambiguous
+            'MODEL': 'בניית מודל מתמטי',
+            'PAT': 'חוקיות',
+            'LIKE': 'איברים דומים',
+            'SUBST': 'הצבה',
+            'PROP': 'חוקי חילוף/קיבוץ/פילוג',
+            // 'SIMPL': 'פישוט ביטויים', // Conflict with TOP
+            'EQV': 'ביטויים שקולים',
+            'POWER': 'חזקה ככתיב מקוצר',
+            'DEF': 'הגדרה',
+            'MEAN': 'משמעות פתרון',
+            'CHECK': 'בדיקת פתרונות',
+            'VERIFY': 'אימות הצבה',
+            'SOLVE': 'פתרון משוואות',
+            'BALANCE': 'איזון משוואות',
+            'VARDEF': 'הגדרת משתנה',
+            'FORM': 'בניית משוואה מטקסט',
+            'VALID': 'בדיקת היתכנות',
+            'CONTEXT': 'הקשרים שונים',
+            'REASON': 'נימוק מתמטי',
+            'BOXPROPS': 'מאפייני תיבה',
+            'BOXSURF': 'שטח פנים תיבה',
+            'BOXVOL': 'נפח תיבה',
+            'NETS': 'פריסות',
+            'PRISMPROPS': 'מאפייני מנסרה',
+            'PRISMCOMP': 'חישובי מנסרה',
+            'HGT': 'גובה במשולש',
+            'AREA': 'שטח',
+            'PAREA': 'שטח מצולע',
+            'APPL': 'יישום בגיאומטריה',
+            // 'TYPES': 'סוגי צורות', // Conflict
+            'EQT': 'משולש שווה צלעות',
+            'ISO': 'משולש שווה שוקיים',
+            'INEQ': 'אי שוויון',
+            // 'MEAS': 'מדידת זוויות', // Conflict
+            'ADJ': 'זוויות צמודות',
+            'VRT': 'זוויות קודקודיות',
+            'BIS': 'חוצה זווית',
+            // 'ALG': 'חישובים בזוויות', // Conflict with DOM
+            'PAR': 'זוויות בין מקבילים',
+            'CENT': 'זווית מרכזית',
+            'REL': 'יחס היקף–קוטר',
+            'PI': 'חישובי מעגל',
+            'CRSDEF': 'הגדרת מערכת צירים',
+            'MAP': 'התאמת נקודות',
+            'PLOT': 'שרטוט נקודות',
+            'LEN': 'אורך',
+            'DIFF': 'הפרשים',
+            'TAB': 'טבלה',
+            'GRF': 'גרף',
+            'DIA': 'דיאגרמות',
+            'CRIT': 'קריטריון מיון',
+            'REP': 'ייצוגים',
+
+
+            // --- SCIENCE (Previous - Kept for fallback) ---
+            'CHEM': 'כימיה',
+            'PHY': 'פיזיקה',
+            'BIO': 'ביולוגיה',
+            'EARTH': 'מדעי כדור הארץ והסביבה',
+            'TECH': 'טכנולוגיה',
+            // ... (Other Science terms implied to still be available if needed)
+        };
+        
+        // Custom Overrides for Ambiguous Math Keys
+        const MATH_OVERRIDES = {
+            'SIMPL': { 'TOP': 'כינוס איברים ושוויון ביטויים', 'SUB': 'פישוט ביטויים' },
+            'MEAS': { 'TOP': 'מדידות במערכת הצירים', 'SUB': 'מדידת זוויות' },
+            'ALG': { 'DOMAIN': 'אלגברה', 'SUB': 'חישובים בזוויות' },
+            'TYPES': { 'SUB': 'סוגי ביטויים/צורות' } // Shared SUB meaning usually implies types
+        };
+
+        // --- State ---
+        let mainData = [];
+        let scienceIndex = {}; 
+        let skillsIndex = {};
+        let keyTranslationMap = {}; // Kept for backward compatibility if needed, but FIELD_LABELS is primary
+        let currentIndex = 0;
+
+        // Keys to ignore completely (Hidden from user)
+        const IGNORED_KEYS = ['questiontype', 'wiifm'];
+
+        // --- Helper: Fetch Google Sheet Data via Gviz ---
+        async function fetchSheetData(sheetId, gid) {
+            const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&tq&gid=${gid}`;
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const text = await response.text();
+                
+                const jsonString = text.substring(47).slice(0, -2);
+                const json = JSON.parse(jsonString);
+                
+                return processGvizTable(json.table);
+            } catch (error) {
+                console.error('Error fetching sheet:', error);
+                throw error;
+            }
+        }
+
+        function processGvizTable(table) {
+            const headers = table.cols.map(col => col.label || 'Unknown');
+            
+            return table.rows.map(row => {
+                const item = {};
+                row.c.forEach((cell, index) => {
+                    const header = headers[index];
+                    let value = cell ? (cell.v !== null ? cell.v : '') : '';
+                    item[header] = value;
+                });
+                return item;
+            });
+        }
+
+        // --- Helper: Build Index Maps ---
+        function buildIndexMap(data) {
+            const map = {};
+            data.forEach(row => {
+                const keys = Object.keys(row);
+                let codeKey = keys.find(k => k.toLowerCase().includes('code') || k.includes('קוד') || k.toLowerCase().includes('id')) || keys[0];
+                let valKey = keys.find(k => (k !== codeKey) && (k.includes('שם') || k.includes('Name') || k.includes('hebrew') || k.includes('עברית'))) || keys[1];
+                
+                if (row[codeKey]) {
+                    map[row[codeKey]] = row[valKey] || row[codeKey];
+                }
+            });
+            return map;
+        }
+
+        function buildKeyTranslationMap(data) {
+            const map = {};
+            data.forEach(row => {
+                const keys = Object.keys(row);
+                const enKey = row[keys[0]]; 
+                const heVal = row[keys[1]];
+                if (enKey && heVal) {
+                    map[enKey.toLowerCase().trim()] = heVal;
+                }
+            });
+            return map;
+        }
+
+        // --- Helper: Translate MOE Codes ---
+        function translateMoeCode(code) {
+            if (!code) return code;
+            code = code.trim();
+
+            if (code === 'TRANS') return 'מעבר מצב צבירה/הובלה באדם';
+            if (MOE_DICTIONARY[code]) return MOE_DICTIONARY[code];
+
+            // Structure: MOE.MATH.G7.DOMAIN.TOP-SUB.XXX
+            if (code.startsWith('MOE.')) {
+                const parts = code.split('.');
+                if (parts.length >= 5) {
+                    const domCode = parts[3];
+                    const topSub = parts[4]; 
+                    
+                    let translatedParts = [];
+                    
+                    // Domain
+                    if (MATH_OVERRIDES[domCode] && MATH_OVERRIDES[domCode]['DOMAIN']) {
+                         translatedParts.push(MATH_OVERRIDES[domCode]['DOMAIN']);
+                    } else if (MOE_DICTIONARY[domCode]) {
+                         translatedParts.push(MOE_DICTIONARY[domCode]);
+                    }
+
+                    // Top/Sub
+                    if (topSub.includes('-')) {
+                        const [topCode, subCode] = topSub.split('-');
+                        
+                        // TOP
+                        if (MATH_OVERRIDES[topCode] && MATH_OVERRIDES[topCode]['TOP']) {
+                            translatedParts.push(MATH_OVERRIDES[topCode]['TOP']);
+                        } else if (MOE_DICTIONARY[topCode]) {
+                            translatedParts.push(MOE_DICTIONARY[topCode]);
+                        }
+                        
+                        // SUB
+                        if (subCode === 'TRANS') translatedParts.push('מעבר מצב צבירה');
+                        else if (MATH_OVERRIDES[subCode] && MATH_OVERRIDES[subCode]['SUB']) {
+                             translatedParts.push(MATH_OVERRIDES[subCode]['SUB']);
+                        } else if (MOE_DICTIONARY[subCode]) {
+                             translatedParts.push(MOE_DICTIONARY[subCode]);
+                        } else {
+                             translatedParts.push(subCode);
+                        }
+                    } else {
+                         // Fallback if no dash
+                         if (MOE_DICTIONARY[topSub]) translatedParts.push(MOE_DICTIONARY[topSub]);
+                    }
+
+                    if (translatedParts.length > 0) {
+                        return translatedParts.join(' > ');
+                    }
+                }
+            }
+            
+            if (scienceIndex[code]) return scienceIndex[code];
+
+            return code;
+        }
+
+        // --- Initialization ---
+        async function init() {
+            try {
+                const [rawData, rawScience, rawSkills, rawKeys] = await Promise.all([
+                    fetchSheetData(DATA_SHEET_ID, DATA_GID),
+                    fetchSheetData(SCIENCE_INDEX_ID, SCIENCE_GID),
+                    fetchSheetData(SKILLS_INDEX_ID, SKILLS_GID),
+                    fetchSheetData(KEYS_SHEET_ID, KEYS_GID)
+                ]);
+
+                mainData = rawData.filter(row => {
+                    const keys = Object.keys(row);
+                    return keys.some(k => row[k] && row[k].toString().trim() !== '');
+                });
+
+                scienceIndex = buildIndexMap(rawScience);
+                skillsIndex = buildIndexMap(rawSkills);
+                keyTranslationMap = buildKeyTranslationMap(rawKeys);
+
+                if (mainData.length === 0) {
+                    throw new Error("לא נמצאו נתונים בגליון הראשי");
+                }
+
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
+                
+                setupEventListeners();
+                renderCurrentItem();
+
+            } catch (err) {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('error').classList.remove('hidden');
+                document.getElementById('errorMessage').textContent = 'שגיאה בטעינה: ' + err.message;
+            }
+        }
+
+        // --- Rendering ---
+        function renderCurrentItem() {
+            if (mainData.length === 0) return;
+            
+            const item = mainData[currentIndex];
+            const keys = Object.keys(item);
+
+            const idKey = keys.find(k => k.toLowerCase().includes('id') || k.includes('מזהה')) || keys[0];
+            const titleKey = keys.find(k => k.toLowerCase().includes('title') || k.includes('שם')) || keys[1];
+            const linkKey = keys.find(k => k.toLowerCase().includes('link') || k.toLowerCase().includes('url') || k.includes('קישור')) || keys[2];
+            const descKey = keys.find(k => k.toLowerCase().includes('desc') || k.includes('תיאור')) || keys[3];
+
+            document.getElementById('itemId').textContent = item[idKey] || '-';
+            
+            const currentTitle = item[titleKey] || 'ללא כותרת';
+            document.getElementById('mainHeaderTitle').textContent = currentTitle;
+            document.title = currentTitle; 
+            
+            document.getElementById('itemDesc').textContent = item[descKey] || '';
+            document.getElementById('counter').textContent = `פריט ${currentIndex + 1} מתוך ${mainData.length}`;
+
+            const link = item[linkKey];
+            const iframe = document.getElementById('contentFrame');
+            const extLinkBtn = document.getElementById('externalLinkBtn');
+            
+            if (link && link.startsWith('http')) {
+                let embedLink = link;
+                if (link.includes('youtube.com/watch')) {
+                    embedLink = link.replace('watch?v=', 'embed/');
+                }
+                iframe.src = embedLink;
+                extLinkBtn.href = link;
+                extLinkBtn.classList.remove('pointer-events-none', 'opacity-50');
+            } else {
+                iframe.src = 'about:blank';
+                extLinkBtn.href = '#';
+                extLinkBtn.classList.add('pointer-events-none', 'opacity-50');
+            }
+
+            const metadataList = document.getElementById('metadataList');
+            metadataList.innerHTML = ''; 
+
+            keys.forEach(key => {
+                // Skip Title, Desc, Link, ID from the list as they are displayed in main area
+                if ([idKey, titleKey, linkKey, descKey].includes(key)) return;
+                
+                const rawValue = item[key];
+                if (!rawValue || rawValue.toString().trim() === '') return;
+
+                const normalizedKey = key.toLowerCase().trim();
+                
+                // 1. Check if ignored (Hidden)
+                if (IGNORED_KEYS.includes(normalizedKey)) return;
+
+                // 2. Translate Key (Label)
+                const displayLabel = FIELD_LABELS[normalizedKey] || keyTranslationMap[normalizedKey] || key;
+
+                let displayValue = rawValue;
+                
+                // --- VALUE MAPPING LOGIC ---
+                
+                // A. Skills and Subtopics (Specific Logic)
+                const isSkills = normalizedKey.includes('skills') || displayLabel.includes('מיומנויות');
+                const isSubtopics = normalizedKey.includes('subtopic') || displayLabel.includes('נושא ידע'); // Covers 'subtopic' and 'prerequisiteSubTopics'
+
+                if (isSkills || isSubtopics) {
+                     const parts = String(rawValue).split(',').map(p => p.trim());
+                     const mappedParts = parts.map(part => {
+                        let translated = part;
+                        
+                        if (isSkills) {
+                            if (SKILLS_DICTIONARY[part]) translated = SKILLS_DICTIONARY[part];
+                            else if (skillsIndex[part]) translated = skillsIndex[part];
+                        } else if (isSubtopics) {
+                            translated = translateMoeCode(part);
+                        }
+                        
+                        if (translated !== part) {
+                            return `<span class="inline-block bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs font-semibold border border-blue-100 mr-1 mb-1">${translated}</span>`;
+                        }
+                        return part;
+                    });
+                    displayValue = mappedParts.join(' '); 
+                } 
+                // B. Value Maps (Generic Lookups)
+                else if (VALUE_MAPS[normalizedKey]) {
+                    const parts = String(rawValue).split(',').map(p => p.trim());
+                    const mappedParts = parts.map(part => {
+                        return VALUE_MAPS[normalizedKey][part] || part;
+                    });
+                    displayValue = mappedParts.join(', ');
+                }
+
+                const div = document.createElement('div');
+                div.className = "border-b border-gray-100 pb-2 last:border-0";
+                div.innerHTML = `
+                    <div class="text-gray-500 text-xs font-medium mb-1 uppercase tracking-wider">${displayLabel}</div>
+                    <div class="text-gray-800 text-sm leading-relaxed">${displayValue}</div>
+                `;
+                metadataList.appendChild(div);
+            });
+            
+            document.getElementById('btnPrev').disabled = currentIndex === 0;
+            document.getElementById('btnNext').disabled = currentIndex === mainData.length - 1;
+        }
+
+        function setupEventListeners() {
+            document.getElementById('btnPrev').addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    renderCurrentItem();
+                }
+            });
+
+            document.getElementById('btnNext').addEventListener('click', () => {
+                if (currentIndex < mainData.length - 1) {
+                    currentIndex++;
+                    renderCurrentItem();
+                }
+            });
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') { 
+                    if (currentIndex < mainData.length - 1) {
+                         currentIndex++;
+                         renderCurrentItem();
+                    }
+                }
+                if (e.key === 'ArrowRight') {
+                    if (currentIndex > 0) {
+                         currentIndex--;
+                         renderCurrentItem();
+                    }
+                }
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
