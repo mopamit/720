@@ -67,13 +67,13 @@
                 הבא
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </button>
-            <span id="counter" class="text-xs text-gray-500 font-mono mx-2">טוען...</span>
+            <span id="counter" class="text-xs text-gray-600 font-bold font-mono mx-2 bg-gray-100 px-2 py-1 rounded">טוען...</span>
         </div>
         
         <h1 id="mainHeaderTitle" class="text-lg font-bold text-gray-800 truncate flex-1 text-center">טוען כותרת...</h1>
         
         <div class="flex items-center gap-2">
-             <span class="bg-indigo-50 text-indigo-700 text-xs px-2 py-1 rounded border border-indigo-100 font-mono" id="itemId">ID</span>
+             <span class="bg-indigo-100 text-indigo-900 text-sm font-bold px-3 py-1 rounded border border-indigo-300 font-mono shadow-sm" id="itemId">ID</span>
              <a id="externalLinkBtn" href="#" target="_blank" class="text-gray-500 hover:text-blue-600 transition" title="פתח בחלון חדש">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
              </a>
@@ -110,9 +110,50 @@
             <div id="metadataList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4">
                 <!-- Dynamic content will be injected here -->
             </div>
+
+            <!-- Collapsible Technical Details -->
+            <div class="mt-8 border-t border-gray-100 pt-4">
+                <button onclick="toggleTechnicalDetails()" class="flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 transition font-medium focus:outline-none">
+                    <svg id="techIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transform transition-transform duration-200"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    פרטים טכניים נוספים
+                </button>
+                <div id="technicalDetailsList" class="hidden mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 bg-gray-50 p-4 rounded-lg text-xs">
+                    <!-- Technical content will be injected here -->
+                </div>
+            </div>
         </div>
 
     </main>
+
+    <!-- Popup Modal -->
+    <div id="popupModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="bg-white w-full max-w-5xl h-[85vh] rounded-lg shadow-2xl flex flex-col overflow-hidden relative">
+            <!-- Modal Header -->
+            <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                <div>
+                    <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded" id="modalId">ID</span>
+                    <h2 id="modalTitle" class="text-lg font-bold text-gray-800 inline-block mr-2">כותרת המשאב</h2>
+                </div>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1 rounded-full transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            
+            <!-- Modal Body (Iframe) -->
+            <div class="flex-1 bg-gray-100 relative">
+                 <div id="modalLoader" class="absolute inset-0 flex items-center justify-center bg-white z-0">
+                    <div class="loader"></div>
+                 </div>
+                 <iframe id="modalFrame" src="" class="w-full h-full relative z-10 bg-white"></iframe>
+            </div>
+
+            <!-- Modal Footer -->
+             <div class="bg-white px-4 py-2 border-t border-gray-200 flex justify-between items-center text-sm text-gray-500">
+                <span id="modalDesc" class="truncate max-w-2xl"></span>
+                <a id="modalExternalLink" href="#" target="_blank" class="text-blue-600 hover:underline">פתח בחלון חדש</a>
+            </div>
+        </div>
+    </div>
 
     <!-- Loading State -->
     <div id="loading" class="flex-1 flex flex-col items-center justify-center text-center">
@@ -166,7 +207,8 @@
             'depthlevel': 'רמת עומק',
             'cognitivelevel': 'רמת חשיבה',
             'languages': 'שפה',
-            'estimatedtimeinminutes': 'משך צפוי ללמידה'
+            'estimatedtimeinminutes': 'משך צפוי ללמידה',
+            'wiifm': 'WIIFM (אמיל"י)'
         };
 
         // 2. Value Translations (Content)
@@ -317,7 +359,11 @@
         let currentIndex = 0;
 
         // Keys to ignore completely (Hidden from user)
-        const IGNORED_KEYS = ['questiontype', 'wiifm'];
+        // Added 'topic' to ignored keys
+        const IGNORED_KEYS = ['questiontype', 'wiifm', 'topic'];
+        
+        // Keys to move to "Technical Details" section
+        const TECHNICAL_KEYS = ['subject', 'gradelevel', 'manufacture', 'targetsector', 'targetaudience', 'languages'];
 
         // --- Helper: Fetch Google Sheet Data via Gviz ---
         async function fetchSheetData(sheetId, gid) {
@@ -500,7 +546,9 @@
             }
 
             const metadataList = document.getElementById('metadataList');
+            const technicalDetailsList = document.getElementById('technicalDetailsList');
             metadataList.innerHTML = ''; 
+            technicalDetailsList.innerHTML = '';
 
             keys.forEach(key => {
                 // Skip Title, Desc, Link, ID from the list as they are displayed in main area
@@ -518,53 +566,173 @@
                 const displayLabel = FIELD_LABELS[normalizedKey] || keyTranslationMap[normalizedKey] || key;
 
                 let displayValue = rawValue;
+                let isLinkable = false;
                 
                 // --- VALUE MAPPING LOGIC ---
+                
+                // Special case for 'priorbasedpractice' (Prerequisites)
+                if (normalizedKey.includes('priorbasedpractice') || displayLabel.includes('ידע מקדים')) {
+                    const ids = String(rawValue).split(',').map(s => s.trim());
+                    const links = ids.map(id => {
+                        // Check if ID is likely valid (basic check)
+                        if (id.length > 1) {
+                             return `<button onclick="openModal('${id}')" class="text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1 font-medium bg-blue-50 px-2 py-0.5 rounded border border-blue-100 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                                ${id}
+                             </button>`;
+                        }
+                        return id;
+                    });
+                    displayValue = links.join(' ');
+                    isLinkable = true;
+                }
                 
                 // A. Skills and Subtopics (Specific Logic)
                 const isSkills = normalizedKey.includes('skills') || displayLabel.includes('מיומנויות');
                 const isSubtopics = normalizedKey.includes('subtopic') || displayLabel.includes('נושא ידע'); // Covers 'subtopic' and 'prerequisiteSubTopics'
 
-                if (isSkills || isSubtopics) {
-                     const parts = String(rawValue).split(',').map(p => p.trim());
-                     const mappedParts = parts.map(part => {
-                        let translated = part;
-                        
-                        if (isSkills) {
-                            if (SKILLS_DICTIONARY[part]) translated = SKILLS_DICTIONARY[part];
-                            else if (skillsIndex[part]) translated = skillsIndex[part];
-                        } else if (isSubtopics) {
-                            translated = translateMoeCode(part);
-                        }
-                        
-                        if (translated !== part) {
-                            return `<span class="inline-block bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs font-semibold border border-blue-100 mr-1 mb-1">${translated}</span>`;
-                        }
-                        return part;
-                    });
-                    displayValue = mappedParts.join(' '); 
-                } 
-                // B. Value Maps (Generic Lookups)
-                else if (VALUE_MAPS[normalizedKey]) {
-                    const parts = String(rawValue).split(',').map(p => p.trim());
-                    const mappedParts = parts.map(part => {
-                        return VALUE_MAPS[normalizedKey][part] || part;
-                    });
-                    displayValue = mappedParts.join(', ');
+                if (!isLinkable) { // Only process if not already processed as link
+                    if (isSkills || isSubtopics) {
+                         const parts = String(rawValue).split(',').map(p => p.trim());
+                         const mappedParts = parts.map(part => {
+                            let translated = part;
+                            
+                            if (isSkills) {
+                                if (SKILLS_DICTIONARY[part]) translated = SKILLS_DICTIONARY[part];
+                                else if (skillsIndex[part]) translated = skillsIndex[part];
+                            } else if (isSubtopics) {
+                                translated = translateMoeCode(part);
+                            }
+                            
+                            if (translated !== part) {
+                                return `<span class="inline-block bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs font-semibold border border-blue-100 mr-1 mb-1">${translated}</span>`;
+                            }
+                            return part;
+                        });
+                        displayValue = mappedParts.join(' '); 
+                    } 
+                    // B. Value Maps (Generic Lookups)
+                    else if (VALUE_MAPS[normalizedKey]) {
+                        const parts = String(rawValue).split(',').map(p => p.trim());
+                        const mappedParts = parts.map(part => {
+                            return VALUE_MAPS[normalizedKey][part] || part;
+                        });
+                        displayValue = mappedParts.join(', ');
+                    }
                 }
 
+                // Check if this key belongs to "Technical Details"
+                const isTechnical = TECHNICAL_KEYS.includes(normalizedKey);
+                
                 const div = document.createElement('div');
-                div.className = "border-b border-gray-100 pb-2 last:border-0";
-                div.innerHTML = `
-                    <div class="text-gray-500 text-xs font-medium mb-1 uppercase tracking-wider">${displayLabel}</div>
-                    <div class="text-gray-800 text-sm leading-relaxed">${displayValue}</div>
-                `;
-                metadataList.appendChild(div);
+                
+                if (isTechnical) {
+                     // Compact style for technical details
+                    div.innerHTML = `
+                        <div class="text-gray-400 text-[10px] font-medium mb-0.5 uppercase tracking-wider">${displayLabel}</div>
+                        <div class="text-gray-700 font-medium truncate" title="${String(displayValue).replace(/<[^>]*>?/gm, '')}">${displayValue}</div>
+                    `;
+                    technicalDetailsList.appendChild(div);
+                } else {
+                    // Regular style for main metadata
+                    div.className = "border-b border-gray-100 pb-2 last:border-0";
+                    div.innerHTML = `
+                        <div class="text-gray-500 text-xs font-medium mb-1 uppercase tracking-wider">${displayLabel}</div>
+                        <div class="text-gray-800 text-sm leading-relaxed">${displayValue}</div>
+                    `;
+                    metadataList.appendChild(div);
+                }
             });
             
             document.getElementById('btnPrev').disabled = currentIndex === 0;
             document.getElementById('btnNext').disabled = currentIndex === mainData.length - 1;
         }
+
+        // --- Technical Details Toggle ---
+        function toggleTechnicalDetails() {
+            const list = document.getElementById('technicalDetailsList');
+            const icon = document.getElementById('techIcon');
+            
+            if (list.classList.contains('hidden')) {
+                list.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                list.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // --- Modal Functions ---
+        function openModal(targetId) {
+            // Find the item with this ID
+            // We search in mainData. Note: idKey might vary, we assume standard ID search
+            let foundItem = null;
+            
+            for (const item of mainData) {
+                const keys = Object.keys(item);
+                const idKey = keys.find(k => k.toLowerCase().includes('id') || k.includes('מזהה')) || keys[0];
+                if (item[idKey] && item[idKey].toString().trim() === targetId.toString().trim()) {
+                    foundItem = item;
+                    break;
+                }
+            }
+
+            if (!foundItem) {
+                alert('לא נמצא פריט עם מזהה זה: ' + targetId);
+                return;
+            }
+
+            // Populate Modal
+            const keys = Object.keys(foundItem);
+            const titleKey = keys.find(k => k.toLowerCase().includes('title') || k.includes('שם')) || keys[1];
+            const linkKey = keys.find(k => k.toLowerCase().includes('link') || k.toLowerCase().includes('url') || k.includes('קישור')) || keys[2];
+            const descKey = keys.find(k => k.toLowerCase().includes('desc') || k.includes('תיאור')) || keys[3];
+
+            document.getElementById('modalId').textContent = targetId;
+            document.getElementById('modalTitle').textContent = foundItem[titleKey] || 'ללא כותרת';
+            document.getElementById('modalDesc').textContent = foundItem[descKey] || '';
+            
+            const link = foundItem[linkKey];
+            const iframe = document.getElementById('modalFrame');
+            const extLink = document.getElementById('modalExternalLink');
+            
+            if (link && link.startsWith('http')) {
+                 let embedLink = link;
+                if (link.includes('youtube.com/watch')) {
+                    embedLink = link.replace('watch?v=', 'embed/');
+                }
+                iframe.src = embedLink;
+                extLink.href = link;
+                extLink.classList.remove('pointer-events-none', 'text-gray-400');
+            } else {
+                iframe.src = 'about:blank';
+                extLink.href = '#';
+                extLink.classList.add('pointer-events-none', 'text-gray-400');
+            }
+
+            // Show Modal
+            document.getElementById('popupModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('popupModal').classList.add('hidden');
+            document.getElementById('modalFrame').src = ''; // Stop video/content
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('popupModal').addEventListener('click', (e) => {
+            if (e.target.id === 'popupModal') {
+                closeModal();
+            }
+        });
+
+        // Keydown listener for Modal (Escape key)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
 
         function setupEventListeners() {
             document.getElementById('btnPrev').addEventListener('click', () => {
@@ -582,6 +750,9 @@
             });
             
             document.addEventListener('keydown', (e) => {
+                // If modal is open, don't navigate main items
+                if (!document.getElementById('popupModal').classList.contains('hidden')) return;
+
                 if (e.key === 'ArrowLeft') { 
                     if (currentIndex < mainData.length - 1) {
                          currentIndex++;
