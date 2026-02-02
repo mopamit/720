@@ -52,6 +52,16 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #a8a8a8; 
         }
+        
+        /* Remove arrows from number input */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
     </style>
 </head>
 <body class="text-gray-800 flex flex-col">
@@ -67,7 +77,13 @@
                 הבא
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </button>
-            <span id="counter" class="text-xs text-gray-600 font-bold font-mono mx-2 bg-gray-100 px-2 py-1 rounded shadow-sm border border-gray-200">טוען...</span>
+            
+            <!-- Navigation Input -->
+            <div class="flex items-center gap-1 mx-2 bg-gray-50 px-2 py-1 rounded border border-gray-200 shadow-sm transition-colors hover:border-gray-300" title="הזן מספר פריט ולחץ Enter">
+                <input type="number" id="jumpToIndex" class="w-10 text-center text-xs font-bold text-gray-700 bg-transparent focus:outline-none focus:text-blue-600 placeholder-gray-400" min="1">
+                <span class="text-xs text-gray-400 select-none">/</span>
+                <span id="totalItems" class="text-xs text-gray-500 font-mono font-medium">...</span>
+            </div>
         </div>
         
         <h1 id="mainHeaderTitle" class="text-lg font-bold text-gray-800 truncate flex-1 text-center">טוען כותרת...</h1>
@@ -596,7 +612,12 @@
             document.title = currentTitle; 
             
             document.getElementById('itemDesc').textContent = item[descKey] || '';
-            document.getElementById('counter').textContent = `פריט ${currentIndex + 1} מתוך ${mainData.length}`;
+            
+            // Update Navigation Input
+            const jumpInput = document.getElementById('jumpToIndex');
+            jumpInput.value = currentIndex + 1;
+            jumpInput.max = mainData.length;
+            document.getElementById('totalItems').textContent = mainData.length;
 
             const link = item[linkKey];
             const iframe = document.getElementById('contentFrame');
@@ -610,15 +631,10 @@
                 iframe.src = embedLink;
                 extLinkBtn.href = link;
                 extLinkBtn.classList.remove('pointer-events-none', 'opacity-50');
-                extLinkBtn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                    התוכן לא מוצג? לחץ כאן לפתיחה בחלון חדש
-                `;
             } else {
                 iframe.src = 'about:blank';
                 extLinkBtn.href = '#';
                 extLinkBtn.classList.add('pointer-events-none', 'opacity-50');
-                extLinkBtn.textContent = 'אין קישור זמין';
             }
 
             const metadataList = document.getElementById('metadataList');
@@ -823,6 +839,34 @@
                     currentIndex++;
                     renderCurrentItem();
                 }
+            });
+            
+            // Jump to Index Input
+            const jumpInput = document.getElementById('jumpToIndex');
+            
+            // Function to handle jump
+            const handleJump = () => {
+                let val = parseInt(jumpInput.value);
+                if (!isNaN(val) && val >= 1 && val <= mainData.length) {
+                    currentIndex = val - 1;
+                    renderCurrentItem();
+                } else {
+                    // Revert to current valid index if invalid
+                    jumpInput.value = currentIndex + 1;
+                }
+            };
+
+            jumpInput.addEventListener('change', handleJump);
+            
+            jumpInput.addEventListener('keydown', (e) => {
+                e.stopPropagation(); // Prevent arrow keys from changing main slide
+                if (e.key === 'Enter') {
+                    jumpInput.blur(); // Triggers 'change' event
+                }
+            });
+
+            jumpInput.addEventListener('focus', () => {
+                jumpInput.select(); // Auto select text on focus
             });
             
             document.addEventListener('keydown', (e) => {
