@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>סייר משאבי למידה</title>
+    <title>ממשק לצפייה ביחידות תוכן 720</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -83,7 +83,7 @@
     <!-- LANDING PAGE -->
     <div id="landingPage" class="flex-1 flex flex-col items-center justify-center p-8 bg-gray-50 overflow-y-auto">
         <div class="max-w-5xl w-full text-center">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">סייר משאבי למידה</h1>
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">ממשק לצפייה ביחידות תוכן 720</h1>
             <p class="text-gray-500 mb-12">בחר יחידת לימוד לצפייה</p>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -288,6 +288,7 @@
             },
             skillsDict: {
                 ...CROSS_SKILLS,
+                // Mathematical Competence
                 'MOE.STEM.MATH.LITMATH-FORMULATE.001': 'ניסוח בעיות מתמטית',
                 'MOE.STEM.MATH.LITMATH-REPRESENT.002': 'ייצוג ומתן משמעות לתופעות מתמטיות',
                 'MOE.STEM.MATH.LITMATH-JUDGE.003': 'הערכת פתרונות מתמטיים',
@@ -319,24 +320,27 @@
                 'TRANS': 'הובלה באדם', 'BLOOD': 'מערכת הדם', 'HEAL': 'בריאות ואיכות חיים', 'PLANT': 'מים בצמח', 'ECO': 'מערכות אקולוגיות',
                 'DES': 'תהליך התיכון', 'IMPT': 'השפעת הטכנולוגיה',
                 // SUBTOPICS
-                'DIFF': 'הבחנה/פעפוע', 'MAT': 'חומר', 'VOL': 'נפח', 'UNIT': 'יחידות', 'CAL': 'כיול',
-                'MASS': 'מסה', 'STATE': 'מצב צבירה', 'WEIGHT': 'משקל', 'SOL': 'מוצק/פתרון', 'LIQ': 'נוזל',
-                'PROP': 'תכונות', 'AIR': 'אוויר', 'COMP': 'הרכב/מרכיבים', 'ID': 'זיהוי', 'OXY': 'חמצן', 'FUNC': 'תפקוד',
-                'CO2': 'פחמן דו-חמצני', 'PRESS': 'לחץ', 'ALT': 'גובה', 'GREEN': 'אפקט החממה', 'QLTY': 'איכות חיים',
-                'RES': 'משאבים', 'ENV': 'סביבה', 'SUST': 'קיימות', 'ACT': 'פעולה', 'HEAT': 'חום/חימום', 'CHANGE': 'שינוי',
-                'POINT': 'נקודה', 'EVAP': 'התאדות', 'RATE': 'קצב', 'VOID': 'ריק', 'MOTION': 'תנועה', 'FORCE': 'כוחות',
-                'SHAPE': 'צורה', 'EXP': 'התפשטות', 'TYPE': 'סוגים', 'CONV': 'המרה', 'FLOW': 'זרימה/מעבר', 'DISS': 'פיזור',
-                'PRINC': 'עקרון', 'SYS': 'מערכת', 'CHAR': 'מאפיינים', 'BASIC': 'בסיסי', 'REQ': 'דרישות', 'LEVEL': 'רמה',
-                'HIER': 'מדרג', 'TOOL': 'כלי', 'MICRO': 'מיקרוסקופ', 'STR': 'מבנה', 'IMP': 'חשיבות', 'CIRC': 'מחזור הדם',
-                'NUT': 'מזון', 'EXCR': 'הפרשה', 'IMM': 'חיסון', 'INTEG': 'תיווך', 'THERM': 'ויסות חום', 'HEART': 'לב',
-                'VES': 'כלי דם', 'PULSE': 'דופק', 'PUMP': 'משאבה', 'HB': 'המוגלובין', 'CLOT': 'קרישה', 'RISK': 'סיכון',
-                'CARD': 'לב וכלי דם', 'PREV': 'מניעה', 'WATER': 'מים', 'OSM': 'אוסמוזה', 'ROOT': 'שורש', 'WILT': 'כמישה',
-                'INT': 'אינטראקציה', 'INTER': 'יחסי גומלין', 'GHG': 'גזי חממה', 'CLIM': 'אקלים', 'IMPACT': 'השפעה',
-                'REL': 'קשר', 'SCI': 'מדע', 'PROB': 'בעיה', 'NEED': 'צורך', 'CONST': 'אילוצים', 'PLAN': 'תכנון',
-                'BUILD': 'בנייה', 'EXEC': 'ביצוע', 'PRES': 'הצגה', 'COLLAB': 'שיתופיות', 'ANAL': 'ניתוח'
+                'VOL': 'נפח', 'MASS': 'מסה', 'WEIGHT': 'משקל', 'UNIT': 'יחידות מידה', 'STATE': 'מצב צבירה',
+                'POINT': 'נקודת התכה/רתיחה', 'RATE': 'קצב', 'DIFF': 'פעפוע', 'PRESS': 'לחץ', 'AIR': 'הרכב האוויר',
+                'OXY': 'חמצן', 'CO2': 'פחמן דו-חמצני', 'GREEN': 'אפקט החממה', 'ENV': 'סביבה', 'SUST': 'קיימות',
+                'TYPE': 'סוגי אנרגיה', 'CONV': 'המרת אנרגיה', 'FLOW': 'מעבר אנרגיה', 'DISS': 'פיזור אנרגיה',
+                'SYSTEM': 'מערכת', 'FUNC': 'מאפייני חיים', 'NEED': 'צרכים חיוניים', 'HIER': 'רמות ארגון',
+                'MICRO': 'מיקרוסקופ', 'STRUCT': 'מבנה', 'PLANTCELL': 'תא צמח', 'MAT': 'הובלת חומרים',
+                'SYSFUNC': 'תפקודי מערכת', 'HEART': 'לב', 'VESSEL': 'כלי דם', 'COMP': 'מרכיבים', 'HB': 'המוגלובין',
+                'IMM': 'חיסון', 'CLOT': 'קרישת דם', 'RISK': 'גורמי סיכון', 'PREV': 'מניעה', 'OSM': 'אוסמוזה',
+                'TRANSP': 'דיות', 'WILT': 'כמישה', 'INTER': 'יחסי גומלין', 'CLIM': 'שינויי אקלים',
+                'SCIRELS': 'מדע וטכנולוגיה', 'CONST': 'אילוצים', 'PLAN': 'תכנון', 'EXEC': 'ביצוע',
+                'PRES': 'הצגה', 'COLLAB': 'שיתופיות', 'ENVIMP': 'השפעה סביבתית', 'ENER': 'אנרגיה',
+                
+                // --- NEW COMPLEX MAPPINGS (ENERGY) ---
+                'TYPE-ENER': 'זיהוי סוגי אנרגיה',
+                'TRANS-CONV': 'ייצוג המרות אנרגיה',
+                'TRANS-FLOW': 'זיהוי וייצוג של מעברי אנרגיה',
+                'HEAT-DISS': 'הבנה שהמרות אנרגיה מחממות בדרך כלל את הסביבה'
             },
             skillsDict: {
                 ...CROSS_SKILLS,
+                // Scientific Competence
                 'MOE.STEM.SCIENTIFIC.LITSCI-CONCEPTS.001': 'הבנת מושגים, תופעות ומונחים',
                 'MOE.STEM.SCIENTIFIC.LITSCI-APPLY.002': 'יישום מושגים מדעיים בהקשרים מגוונים',
                 'MOE.STEM.SCIENTIFIC.EXPLAIN-EVIDENCE.001': 'בניית הסברים מבוססי ראיות',
@@ -499,15 +503,22 @@
             // 1. Try Loaded External Index (Exact Match)
             if (subtopicsIndex[code]) return subtopicsIndex[code];
 
-            // 2. Try Splitting by '.' (MOE logic) and looking up parts in external index
+            // 2. Try Splitting by '.' (MOE logic)
             if (code.startsWith('MOE.')) {
                 const parts = code.split('.');
-                // Parts example: MOE, MATH, G7, ALG, EXPR
+                // Parts example: MOE, SCI, G7, PHY, ENRG, TYPE-ENER
                 let components = [];
-                // Skip MOE, MATH, G7 (first 3 parts usually)
+                // Skip first 3 parts usually (MOE, SUBJ, GRADE)
                 for (let i = 3; i < parts.length; i++) {
                     const part = parts[i];
-                    // Handle TOP-SUB logic (e.g., EXPR-SYM)
+                    
+                    // NEW CHECK: Look for compound part in dict first (e.g. "TYPE-ENER")
+                    if (dict[part]) {
+                        components.push(dict[part]);
+                        continue; // Skip splitting if full part found
+                    }
+
+                    // Handle TOP-SUB logic via splitting if not found
                     if (part.includes('-')) {
                         const subParts = part.split('-');
                         subParts.forEach(sp => {
