@@ -249,10 +249,17 @@
         const SHEET_ID = '1YKIfh8tMXnp83DQoNRQMGEH61qNbukyqbskufQXKRrY';
         const KEYS_SHEET_ID = '12PT72SuTLmt_ayAibMk9r4bEHrFUY10XCvFyc8605Eg';
         const KEYS_GID = '911902053';
+        
+        // OLD INDICES (Fallback / Structure)
         const SCIENCE_INDEX_ID = '1gqeucmOSQIi565kIoG1hUzOpT4VOriz6ehJfBbc8Ndo';
-        const SCIENCE_GID = '0'; 
+        const SCIENCE_GID = '0'; // Subtopics GID for Science
+        
         const SKILLS_INDEX_ID = '1FlAzcibPOItnXUyTgN7Jmb-Kzm006K54qkrTNX7cdUQ';
         const SKILLS_GID_MATH = '1661050144';
+        
+        // NEW INDICES
+        const MATH_INDEX_ID = '1Hv-Kl5P6uQtcMUN42jdF_lQt6tHNP_G3jOhS9Eq_ugo';
+        const MATH_INDEX_GID = '1357646660';
 
         // --- SUBJECT CONFIGURATIONS ---
         
@@ -272,31 +279,12 @@
 
         // 2. Math Configuration
         const MATH_CONFIG = {
-            // Note: GID is now passed from the button
-            ignoredKeys: ['questiontype', 'topic'], 
-            moeDict: {
-                // DOMAIN
+            ignoredKeys: ['questiontype', 'topic', 'נושא'], 
+            indexSheetId: MATH_INDEX_ID,
+            indexGid: MATH_INDEX_GID,
+            moeDict: { 
                 'ALG': 'אלגברה', 'GEO': 'גיאומטריה', 'NUM': 'מספרים', 'UNC': 'אי ודאות',
-                // TOP
-                'EXPR': 'משתנים וביטויים אלגבריים', 'SIMPL': 'כינוס איברים ושוויון ביטויים', 
-                'EQNS': 'משוואות פשוטות', 'WPB': 'שאלות מילוליות פשוטות', 'WPI': 'שאלות אורייניות אינטגרטיביות', 
-                'SOLID': 'תיבות ומנסרות', 'TRI': 'משולשים ומצולעים', 'ANG': 'זוויות וישרים', 
-                'CIRC': 'קווים ומעגלים', 'COMP': 'צורות מורכבות', 'ARITH': 'חוקי חשבון', 
-                'POW': 'חזקות ושורשים', 'SGN': 'מספרים חיוביים ושליליים', 'CRD': 'מערכת הצירים', 
-                'MEAS': 'מדידות במערכת הצירים', 'DATA': 'אי ודאות',
-                // SUB
-                'VAR': 'משתנה', 'SYM': 'סימנים מתמטיים', 'TYPES': 'סוגי ביטויים/צורות', 'MODEL': 'בניית מודל מתמטי',
-                'PAT': 'חוקיות', 'LIKE': 'איברים דומים', 'SUBST': 'הצבה', 'PROP': 'חוקי חילוף/קיבוץ/פילוג',
-                'EQV': 'ביטויים שקולים', 'POWER': 'חזקה ככתיב מקוצר', 'DEF': 'הגדרה', 'MEAN': 'משמעות פתרון',
-                'CHECK': 'בדיקת פתרונות', 'VERIFY': 'אימות הצבה', 'SOLVE': 'פתרון משוואות', 'BALANCE': 'איזון משוואות',
-                'VARDEF': 'הגדרת משתנה', 'FORM': 'בניית משוואה מטקסט', 'VALID': 'בדיקת היתכנות', 'CONTEXT': 'הקשרים שונים',
-                'REASON': 'נימוק מתמטי', 'BOXPROPS': 'מאפייני תיבה', 'BOXSURF': 'שטח פנים תיבה', 'BOXVOL': 'נפח תיבה',
-                'NETS': 'פריסות', 'PRISMPROPS': 'מאפייני מנסרה', 'PRISMCOMP': 'חישובי מנסרה', 'HGT': 'גובה במשולש',
-                'AREA': 'שטח', 'PAREA': 'שטח מצולע', 'APPL': 'יישום בגיאומטריה', 'EQT': 'משולש שווה צלעות',
-                'ISO': 'משולש שווה שוקיים', 'INEQ': 'אי שוויון', 'ADJ': 'זוויות צמודות', 'VRT': 'זוויות קודקודיות',
-                'BIS': 'חוצה זווית', 'PAR': 'זוויות בין מקבילים', 'CENT': 'זווית מרכזית', 'REL': 'יחס היקף–קוטר',
-                'PI': 'חישובי מעגל', 'CRSDEF': 'הגדרת מערכת צירים', 'MAP': 'התאמת נקודות', 'PLOT': 'שרטוט נקודות',
-                'LEN': 'אורך', 'DIFF': 'הפרשים', 'TAB': 'טבלה', 'GRF': 'גרף', 'DIA': 'דיאגרמות', 'CRIT': 'קריטריון מיון', 'REP': 'ייצוגים'
+                'VAR': 'משתנה', 'SYM': 'סימנים מתמטיים' 
             },
             skillsDict: {
                 ...CROSS_SKILLS,
@@ -314,32 +302,38 @@
                 'MOE.STEM.MATH.CRIT-ERROR.002': 'זיהוי טעויות',
                 'MOE.STEM.MATH.PROBLEM-APPLY.001': 'יישום כלים מתמטיים לפתרון בעיות'
             },
-            overrides: {
-                'SIMPL': { 'TOP': 'כינוס איברים ושוויון ביטויים', 'SUB': 'פישוט ביטויים' },
-                'MEAS': { 'TOP': 'מדידות במערכת הצירים', 'SUB': 'מדידת זוויות' },
-                'ALG': { 'DOMAIN': 'אלגברה', 'SUB': 'חישובים בזוויות' },
-                'TYPES': { 'SUB': 'סוגי ביטויים/צורות' }
-            }
+            overrides: {}
         };
 
         // 3. Science Configuration
         const SCIENCE_CONFIG = {
-            // Note: GID is now passed from the button
-            ignoredKeys: ['questiontype', 'wiifm'], // topic is usually shown in Science
-            moeDict: {
+            ignoredKeys: ['questiontype', 'wiifm'], 
+            indexSheetId: SCIENCE_INDEX_ID,
+            indexGid: '0', 
+            moeDict: { 
+                // DOMAINS
                 'CHEM': 'כימיה', 'PHY': 'פיזיקה', 'BIO': 'ביולוגיה', 'EARTH': 'מדעי כדור הארץ והסביבה', 'TECH': 'טכנולוגיה',
+                // TOPICS
                 'MEAS': 'מידות ומדידות', 'GAS': 'גזים והאוויר', 'MATL': 'חומרים והשפעתם', 'PHASE': 'מצבי צבירה', 'PART': 'מודל החלקיקים',
                 'ENRG': 'אנרגיה', 'CONS': 'חוקי שימור', 'LIFE': 'מאפייני החיים', 'ORG': 'רמות ארגון', 'CELL': 'התא',
                 'TRANS': 'הובלה באדם', 'BLOOD': 'מערכת הדם', 'HEAL': 'בריאות ואיכות חיים', 'PLANT': 'מים בצמח', 'ECO': 'מערכות אקולוגיות',
-                'DES': 'תהליך התיכון', 'IMPT': 'השפעת הטכנולוגיה', 'VOL': 'נפח', 'MASS': 'מסה', 'WEIGHT': 'משקל', 'UNIT': 'יחידות מידה',
-                'STATE': 'מצב צבירה', 'POINT': 'נקודת התכה/רתיחה', 'RATE': 'קצב', 'DIFF': 'פעפוע', 'PRESS': 'לחץ', 'AIR': 'הרכב האוויר',
-                'OXY': 'חמצן', 'CO2': 'פחמן דו-חמצני', 'GREEN': 'אפקט החממה', 'ENV': 'סביבה', 'SUST': 'קיימות', 'TYPE': 'סוגי אנרגיה',
-                'CONV': 'המרת אנרגיה', 'FLOW': 'מעבר אנרגיה', 'DISS': 'פיזור אנרגיה', 'SYSTEM': 'מערכת', 'FUNC': 'מאפייני חיים',
-                'NEED': 'צרכים חיוניים', 'HIER': 'רמות ארגון', 'MICRO': 'מיקרוסקופ', 'STRUCT': 'מבנה', 'PLANTCELL': 'תא צמח',
-                'MAT': 'הובלת חומרים', 'SYSFUNC': 'תפקודי מערכת', 'HEART': 'לב', 'VESSEL': 'כלי דם', 'COMP': 'מרכיבים',
-                'HB': 'המוגלובין', 'IMM': 'חיסון', 'CLOT': 'קרישת דם', 'RISK': 'גורמי סיכון', 'PREV': 'מניעה', 'OSM': 'אוסמוזה',
-                'TRANSP': 'דיות', 'WILT': 'כמישה', 'INTER': 'יחסי גומלין', 'CLIM': 'שינויי אקלים', 'SCIRELS': 'מדע וטכנולוגיה',
-                'CONST': 'אילוצים', 'PLAN': 'תכנון', 'EXEC': 'ביצוע', 'PRES': 'הצגה', 'COLLAB': 'שיתופיות', 'ENVIMP': 'השפעה סביבתית'
+                'DES': 'תהליך התיכון', 'IMPT': 'השפעת הטכנולוגיה',
+                // SUBTOPICS
+                'DIFF': 'הבחנה/פעפוע', 'MAT': 'חומר', 'VOL': 'נפח', 'UNIT': 'יחידות', 'CAL': 'כיול',
+                'MASS': 'מסה', 'STATE': 'מצב צבירה', 'WEIGHT': 'משקל', 'SOL': 'מוצק/פתרון', 'LIQ': 'נוזל',
+                'PROP': 'תכונות', 'AIR': 'אוויר', 'COMP': 'הרכב/מרכיבים', 'ID': 'זיהוי', 'OXY': 'חמצן', 'FUNC': 'תפקוד',
+                'CO2': 'פחמן דו-חמצני', 'PRESS': 'לחץ', 'ALT': 'גובה', 'GREEN': 'אפקט החממה', 'QLTY': 'איכות חיים',
+                'RES': 'משאבים', 'ENV': 'סביבה', 'SUST': 'קיימות', 'ACT': 'פעולה', 'HEAT': 'חום/חימום', 'CHANGE': 'שינוי',
+                'POINT': 'נקודה', 'EVAP': 'התאדות', 'RATE': 'קצב', 'VOID': 'ריק', 'MOTION': 'תנועה', 'FORCE': 'כוחות',
+                'SHAPE': 'צורה', 'EXP': 'התפשטות', 'TYPE': 'סוגים', 'CONV': 'המרה', 'FLOW': 'זרימה/מעבר', 'DISS': 'פיזור',
+                'PRINC': 'עקרון', 'SYS': 'מערכת', 'CHAR': 'מאפיינים', 'BASIC': 'בסיסי', 'REQ': 'דרישות', 'LEVEL': 'רמה',
+                'HIER': 'מדרג', 'TOOL': 'כלי', 'MICRO': 'מיקרוסקופ', 'STR': 'מבנה', 'IMP': 'חשיבות', 'CIRC': 'מחזור הדם',
+                'NUT': 'מזון', 'EXCR': 'הפרשה', 'IMM': 'חיסון', 'INTEG': 'תיווך', 'THERM': 'ויסות חום', 'HEART': 'לב',
+                'VES': 'כלי דם', 'PULSE': 'דופק', 'PUMP': 'משאבה', 'HB': 'המוגלובין', 'CLOT': 'קרישה', 'RISK': 'סיכון',
+                'CARD': 'לב וכלי דם', 'PREV': 'מניעה', 'WATER': 'מים', 'OSM': 'אוסמוזה', 'ROOT': 'שורש', 'WILT': 'כמישה',
+                'INT': 'אינטראקציה', 'INTER': 'יחסי גומלין', 'GHG': 'גזי חממה', 'CLIM': 'אקלים', 'IMPACT': 'השפעה',
+                'REL': 'קשר', 'SCI': 'מדע', 'PROB': 'בעיה', 'NEED': 'צורך', 'CONST': 'אילוצים', 'PLAN': 'תכנון',
+                'BUILD': 'בנייה', 'EXEC': 'ביצוע', 'PRES': 'הצגה', 'COLLAB': 'שיתופיות', 'ANAL': 'ניתוח'
             },
             skillsDict: {
                 ...CROSS_SKILLS,
@@ -366,7 +360,7 @@
         // --- Global State ---
         let currentSubject = null;
         let mainData = [];
-        let scienceIndex = {}; 
+        let subtopicsIndex = {}; 
         let skillsIndex = {};
         let keyTranslationMap = {}; 
         let currentIndex = 0;
@@ -378,7 +372,8 @@
             'gradelevel': 'גיל', 'topic': 'שם נושא', 'subtopic': 'נושא ידע', 'prerequisitesubtopics': 'נושאי ידע מקדימים',
             'skills': 'מיומנויות', 'manufacture': 'יצרן תוכן', 'priorbasedpractice': 'ידע מקדים', 'targetsector': 'אוכלוסיית יעד',
             'targetaudience': 'קהל יעד', 'relativedifficulty': 'רמת קושי', 'depthlevel': 'רמת עומק', 'cognitivelevel': 'רמת חשיבה',
-            'languages': 'שפה', 'estimatedtimeinminutes': 'משך צפוי ללמידה', 'wiifm': 'WIIFM (אמיל"י)'
+            'languages': 'שפה', 'estimatedtimeinminutes': 'משך צפוי ללמידה', 'wiifm': 'WIIFM (אמיל"י)',
+            'prerequisitecontents': 'תכנים מקדימים'
         };
         const VALUE_MAPS = {
             'targetsector': { 'State (General)': 'ממלכתי', 'State (Religious)': 'ממלכתי דתי', 'Druze': 'דרוזי', 'Special Education': 'חנ"מ', 'Orthodox': 'ממלכתי חרדי' },
@@ -414,12 +409,11 @@
 
             try {
                 // Determine Auxiliary GIDs based on subject type
-                const subtopicsGid = SCIENCE_GID; 
                 const skillsGid = (subjectType === 'math') ? SKILLS_GID_MATH : '0'; 
 
-                const [rawData, rawScience, rawSkills, rawKeys] = await Promise.all([
+                const [rawData, rawSubtopics, rawSkills, rawKeys] = await Promise.all([
                     fetchSheetData(SHEET_ID, dataGid), // Load the specific Unit GID
-                    fetchSheetData(SCIENCE_INDEX_ID, subtopicsGid),
+                    fetchSheetData(currentSubject.indexSheetId, currentSubject.indexGid), // Load Configured Index (Math or Science)
                     fetchSheetData(SKILLS_INDEX_ID, skillsGid),
                     fetchSheetData(KEYS_SHEET_ID, KEYS_GID)
                 ]);
@@ -429,7 +423,7 @@
                     return keys.some(k => row[k] && row[k].toString().trim() !== '');
                 });
 
-                scienceIndex = buildIndexMap(rawScience);
+                subtopicsIndex = buildIndexMap(rawSubtopics);
                 skillsIndex = buildIndexMap(rawSkills);
                 keyTranslationMap = buildKeyTranslationMap(rawKeys);
 
@@ -475,9 +469,13 @@
             const map = {};
             data.forEach(row => {
                 const keys = Object.keys(row);
+                // Heuristic: Code/ID is usually first, Name/Title is second
                 let codeKey = keys.find(k => k.toLowerCase().includes('code') || k.includes('קוד') || k.toLowerCase().includes('id')) || keys[0];
                 let valKey = keys.find(k => (k !== codeKey) && (k.includes('שם') || k.includes('Name') || k.includes('hebrew') || k.includes('עברית'))) || keys[1];
-                if (row[codeKey]) map[row[codeKey]] = row[valKey] || row[codeKey];
+                
+                if (row[codeKey]) {
+                    map[row[codeKey].trim()] = row[valKey] || row[codeKey];
+                }
             });
             return map;
         }
@@ -497,47 +495,38 @@
             if (!code) return code;
             code = code.trim();
             const dict = currentSubject.moeDict;
-            const overrides = currentSubject.overrides || {};
-
-            // Specific overrides
-            if (code === 'TRANS') return 'מעבר מצב צבירה/הובלה באדם';
             
-            // Direct Dictionary
-            if (dict[code]) return dict[code];
+            // 1. Try Loaded External Index (Exact Match)
+            if (subtopicsIndex[code]) return subtopicsIndex[code];
 
-            // MOE Structure
+            // 2. Try Splitting by '.' (MOE logic) and looking up parts in external index
             if (code.startsWith('MOE.')) {
                 const parts = code.split('.');
-                if (parts.length >= 5) {
-                    const domCode = parts[3];
-                    const topSub = parts[4];
-                    let translatedParts = [];
-
-                    // Domain
-                    if (overrides[domCode]?.DOMAIN) translatedParts.push(overrides[domCode].DOMAIN);
-                    else if (dict[domCode]) translatedParts.push(dict[domCode]);
-
-                    // Top/Sub
-                    if (topSub.includes('-')) {
-                        const [topCode, subCode] = topSub.split('-');
-                        
-                        // TOP
-                        if (overrides[topCode]?.TOP) translatedParts.push(overrides[topCode].TOP);
-                        else if (dict[topCode]) translatedParts.push(dict[topCode]);
-                        
-                        // SUB
-                        if (subCode === 'TRANS') translatedParts.push('מעבר מצב צבירה');
-                        else if (overrides[subCode]?.SUB) translatedParts.push(overrides[subCode].SUB);
-                        else if (dict[subCode]) translatedParts.push(dict[subCode]);
-                        else translatedParts.push(subCode);
+                // Parts example: MOE, MATH, G7, ALG, EXPR
+                let components = [];
+                // Skip MOE, MATH, G7 (first 3 parts usually)
+                for (let i = 3; i < parts.length; i++) {
+                    const part = parts[i];
+                    // Handle TOP-SUB logic (e.g., EXPR-SYM)
+                    if (part.includes('-')) {
+                        const subParts = part.split('-');
+                        subParts.forEach(sp => {
+                            if (subtopicsIndex[sp]) components.push(subtopicsIndex[sp]);
+                            else if (dict[sp]) components.push(dict[sp]);
+                            else components.push(sp);
+                        });
                     } else {
-                        if (dict[topSub]) translatedParts.push(dict[topSub]);
+                        if (subtopicsIndex[part]) components.push(subtopicsIndex[part]);
+                        else if (dict[part]) components.push(dict[part]);
+                        else if (isNaN(part)) components.push(part); // Skip numbers
                     }
-
-                    if (translatedParts.length > 0) return translatedParts.join(' > ');
                 }
+                if (components.length > 0) return components.join(' > ');
             }
-            if (scienceIndex[code]) return scienceIndex[code];
+
+            // 3. Fallback to hardcoded dict
+            if (dict[code]) return dict[code];
+
             return code;
         }
 
@@ -546,9 +535,29 @@
             const item = mainData[currentIndex];
             const keys = Object.keys(item);
 
+            // Safer Title Detection
             const idKey = keys.find(k => k.toLowerCase().includes('id') || k.includes('מזהה')) || keys[0];
-            const titleKey = keys.find(k => k.toLowerCase().includes('title') || k.includes('שם')) || keys[1];
+            
+            // Find a key that looks like a title
+            let titleKey = keys.find(k => 
+                (k.toLowerCase().includes('title') || k.includes('כותרת') || k.includes('שם')) && 
+                !k.toLowerCase().includes('topic') && 
+                !k.includes('נושא')
+            );
+            
+            // If not found, fallback safely avoiding ID/Link/Topic columns
             const linkKey = keys.find(k => k.toLowerCase().includes('link') || k.toLowerCase().includes('url') || k.includes('קישור')) || keys[2];
+            
+            if (!titleKey) {
+                 titleKey = keys.find(k => 
+                    k !== idKey && 
+                    k !== linkKey && 
+                    !k.toLowerCase().includes('topic') && 
+                    !k.includes('נושא') &&
+                    !k.toLowerCase().includes('id')
+                 ) || keys[1]; // Absolute fallback
+            }
+
             const descKey = keys.find(k => k.toLowerCase().includes('desc') || k.includes('תיאור')) || keys[3];
 
             document.getElementById('itemId').textContent = item[idKey] || '-';
@@ -596,12 +605,36 @@
                 const displayLabel = FIELD_LABELS[normalizedKey] || keyTranslationMap[normalizedKey] || key;
                 let displayValue = rawValue;
                 let isLinkable = false;
+                let isNewTabLink = false;
 
+                // Handle Prerequisites (ID based)
                 if (normalizedKey.includes('priorbasedpractice') || displayLabel.includes('ידע מקדים')) {
                     const ids = String(rawValue).split(',').map(s => s.trim());
                     const links = ids.map(id => {
                         if (id.length > 1) {
                              return `<button onclick="openModal('${id}')" class="text-blue-600 hover:underline inline-flex items-center gap-1 font-medium bg-blue-50 px-2 py-0.5 rounded border border-blue-100 transition-colors">${id}</button>`;
+                        }
+                        return id;
+                    });
+                    displayValue = links.join(' ');
+                    isLinkable = true;
+                }
+                
+                // Handle Prerequisite CONTENTS (Link based - new tab)
+                else if (normalizedKey.includes('prerequisitecontents') || displayLabel.includes('תכנים מקדימים')) {
+                    const ids = String(rawValue).split(',').map(s => s.trim());
+                    const links = ids.map(id => {
+                        if (id.length > 1) {
+                             // Try to find the item link in the current data
+                             const linkedItem = findItemById(id);
+                             if (linkedItem && linkedItem.link) {
+                                 return `<a href="${linkedItem.link}" target="_blank" class="text-green-600 hover:underline inline-flex items-center gap-1 font-medium bg-green-50 px-2 py-0.5 rounded border border-green-100 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                    ${id}
+                                 </a>`;
+                             }
+                             // Fallback to ID if no link found
+                             return `<span class="text-gray-500 bg-gray-50 px-2 py-0.5 rounded border border-gray-200" title="לא נמצא קישור">${id}</span>`;
                         }
                         return id;
                     });
@@ -655,6 +688,18 @@
             
             document.getElementById('btnPrev').disabled = currentIndex === 0;
             document.getElementById('btnNext').disabled = currentIndex === mainData.length - 1;
+        }
+
+        function findItemById(targetId) {
+            for (const item of mainData) {
+                const keys = Object.keys(item);
+                const idKey = keys.find(k => k.toLowerCase().includes('id') || k.includes('מזהה')) || keys[0];
+                if (item[idKey] && item[idKey].toString().trim() === targetId.toString().trim()) {
+                    const linkKey = keys.find(k => k.toLowerCase().includes('link') || k.toLowerCase().includes('url') || k.includes('קישור')) || keys[2];
+                    return { link: item[linkKey] };
+                }
+            }
+            return null;
         }
 
         // --- Interaction Functions ---
