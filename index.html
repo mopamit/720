@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סייר משאבי למידה</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f4f6;
+            height: 100vh;
+            overflow: hidden;
+        }
+        /* Landing Page Styles */
+        .landing-card {
+            transition: all 0.3s ease;
+        }
+        .landing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .unit-btn {
+            transition: all 0.2s;
+        }
+        .unit-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Viewer Styles */
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8; 
+        }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="text-gray-800 flex flex-col">
+
+    <!-- LANDING PAGE -->
+    <div id="landingPage" class="flex-1 flex flex-col items-center justify-center p-8 bg-gray-50 overflow-y-auto">
+        <div class="max-w-5xl w-full text-center">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">סייר משאבי למידה</h1>
+            <p class="text-gray-500 mb-12">בחר יחידת לימוד לצפייה</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                
+                <!-- Math Card -->
+                <div class="landing-card bg-white p-8 rounded-2xl shadow-sm border border-gray-200 text-center flex flex-col">
+                    <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path><path d="M8 7h6"></path><path d="M8 11h8"></path></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">מתמטיקה</h2>
+                    <p class="text-sm text-gray-500 mb-6">משאבי לימוד, תרגול והעשרה לכיתות ז'</p>
+                    
+                    <div class="grid grid-cols-2 gap-3 mt-auto">
+                        <button onclick="loadApp('math', '911902053')" class="unit-btn bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 font-medium py-2 px-4 rounded-lg border border-blue-100 transition-colors">
+                            יחידה 1
+                        </button>
+                        <button onclick="loadApp('math', '2041940927')" class="unit-btn bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 font-medium py-2 px-4 rounded-lg border border-blue-100 transition-colors">
+                            יחידה 2
+                        </button>
+                        <button onclick="loadApp('math', '')" class="unit-btn bg-gray-50 text-gray-400 font-medium py-2 px-4 rounded-lg border border-gray-100 cursor-not-allowed" title="טרם פורסם">
+                            יחידה 3
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Science Card -->
+                <div class="landing-card bg-white p-8 rounded-2xl shadow-sm border border-gray-200 text-center flex flex-col">
+                    <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31"></path><path d="M14 2v7.31"></path><path d="M8.5 2h7"></path><path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">מדעים</h2>
+                    <p class="text-sm text-gray-500 mb-6">חומרי למידה בכימיה, פיזיקה, ביולוגיה וטכנולוגיה</p>
+                    
+                    <div class="grid grid-cols-2 gap-3 mt-auto">
+                        <button onclick="loadApp('science', '192441212')" class="unit-btn bg-green-50 hover:bg-green-600 hover:text-white text-green-700 font-medium py-2 px-4 rounded-lg border border-green-100 transition-colors">
+                            יחידה 1
+                        </button>
+                        <button onclick="loadApp('science', '1851687208')" class="unit-btn bg-green-50 hover:bg-green-600 hover:text-white text-green-700 font-medium py-2 px-4 rounded-lg border border-green-100 transition-colors">
+                            יחידה 2
+                        </button>
+                         <button onclick="loadApp('science', '')" class="unit-btn bg-gray-50 text-gray-400 font-medium py-2 px-4 rounded-lg border border-gray-100 cursor-not-allowed" title="טרם פורסם">
+                            יחידה 3
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEWER APP (Hidden initially) -->
+    <div id="app" class="hidden flex flex-col h-full">
+        <!-- Header -->
+        <header class="bg-white px-4 py-2 shadow-sm border-b border-gray-200 flex justify-between items-center gap-4 shrink-0 z-20 h-14">
+            <div class="flex items-center gap-2">
+                <button onclick="showLanding()" class="text-gray-400 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100 mr-2 transition" title="חזרה לתפריט ראשי">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                </button>
+                <div class="h-6 w-px bg-gray-200 mx-1"></div>
+                <button id="btnPrev" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    הקודם
+                </button>
+                <button id="btnNext" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1">
+                    הבא
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                
+                <!-- Navigation Input -->
+                <div class="flex items-center gap-1 mx-2 bg-gray-50 px-2 py-1 rounded border border-gray-200 shadow-sm transition-colors hover:border-gray-300">
+                    <input type="number" id="jumpToIndex" class="w-10 text-center text-xs font-bold text-gray-700 bg-transparent focus:outline-none focus:text-blue-600 placeholder-gray-400" min="1">
+                    <span class="text-xs text-gray-400 select-none">/</span>
+                    <span id="totalItems" class="text-xs text-gray-500 font-mono font-medium">...</span>
+                </div>
+            </div>
+            
+            <h1 id="mainHeaderTitle" class="text-lg font-bold text-gray-800 truncate flex-1 text-center">טוען...</h1>
+            
+            <div class="flex items-center gap-2">
+                 <span class="bg-indigo-100 text-indigo-900 text-sm font-bold px-3 py-1 rounded border border-indigo-300 font-mono shadow-sm" id="itemId">ID</span>
+                 <a id="externalLinkBtn" href="#" target="_blank" class="text-gray-500 hover:text-blue-600 transition" title="פתח בחלון חדש">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                 </a>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="appMainContent" class="flex-1 flex flex-col min-h-0 bg-gray-100 relative">
+            <!-- Loader Overlay -->
+            <div id="loading" class="absolute inset-0 z-50 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center">
+                <div class="loader"></div>
+                <p class="text-gray-600 font-medium mt-4">טוען נתונים...</p>
+            </div>
+
+            <!-- Error Overlay -->
+            <div id="error" class="hidden absolute inset-0 z-50 bg-white flex flex-col items-center justify-center text-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-4"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <p id="errorMessage" class="font-bold">שגיאה בטעינת הנתונים</p>
+                <button onclick="showLanding()" class="mt-4 text-sm text-gray-500 hover:underline">חזרה לתפריט</button>
+            </div>
+
+            <!-- Top Half: Content (50%) -->
+            <div class="h-[50%] w-full relative shrink-0">
+                <div class="iframe-container flex items-center justify-center relative">
+                    <div id="iframePlaceholder" class="absolute inset-0 flex items-center justify-center text-gray-400 z-0 pointer-events-none">
+                        <span class="flex flex-col items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="12" cy="12" r="5"></circle><path d="M12 12V2"></path></svg>
+                            טוען תצוגה מקדימה...
+                        </span>
+                    </div>
+                    <iframe id="contentFrame" src="" class="z-10 bg-white" sandbox="allow-forms allow-scripts allow-same-origin allow-popups"></iframe>
+                </div>
+            </div>
+
+            <!-- Bottom Half: Metadata -->
+            <div class="flex-1 overflow-y-auto bg-white border-t border-gray-300 w-full p-6 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+                <div class="mb-6 pb-4 border-b border-gray-100">
+                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">תיאור הפריט</h3>
+                    <p id="itemDesc" class="text-gray-800 text-base leading-relaxed max-w-4xl"></p>
+                </div>
+
+                <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">פרטים נוספים</h3>
+                <div id="metadataList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4"></div>
+
+                <div class="mt-8 border-t border-gray-100 pt-4">
+                    <button onclick="toggleTechnicalDetails()" class="flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 transition font-medium focus:outline-none">
+                        <svg id="techIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transform transition-transform duration-200"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        פרטים טכניים נוספים
+                    </button>
+                    <div id="technicalDetailsList" class="hidden mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 bg-gray-50 p-4 rounded-lg text-xs"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Popup Modal -->
+    <div id="popupModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="bg-white w-full max-w-5xl h-[85vh] rounded-lg shadow-2xl flex flex-col overflow-hidden relative">
+            <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                <div>
+                    <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded" id="modalId">ID</span>
+                    <h2 id="modalTitle" class="text-lg font-bold text-gray-800 inline-block mr-2">כותרת המשאב</h2>
+                </div>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1 rounded-full transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="flex-1 bg-gray-100 relative">
+                 <div id="modalLoader" class="absolute inset-0 flex items-center justify-center bg-white z-0">
+                    <div class="loader"></div>
+                 </div>
+                 <iframe id="modalFrame" src="" class="w-full h-full relative z-10 bg-white"></iframe>
+            </div>
+             <div class="bg-white px-4 py-2 border-t border-gray-200 flex justify-between items-center text-sm text-gray-500">
+                <span id="modalDesc" class="truncate max-w-2xl"></span>
+                <a id="modalExternalLink" href="#" target="_blank" class="text-blue-600 hover:underline">פתח בחלון חדש</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA CONSTANTS ---
+        const SHEET_ID = '1YKIfh8tMXnp83DQoNRQMGEH61qNbukyqbskufQXKRrY';
+        const KEYS_SHEET_ID = '12PT72SuTLmt_ayAibMk9r4bEHrFUY10XCvFyc8605Eg';
+        const KEYS_GID = '911902053';
+        const SCIENCE_INDEX_ID = '1gqeucmOSQIi565kIoG1hUzOpT4VOriz6ehJfBbc8Ndo';
+        const SCIENCE_GID = '0'; 
+        const SKILLS_INDEX_ID = '1FlAzcibPOItnXUyTgN7Jmb-Kzm006K54qkrTNX7cdUQ';
+        const SKILLS_GID_MATH = '1661050144';
+
+        // --- SUBJECT CONFIGURATIONS ---
+        
+        // 1. Shared Dictionaries (Cross-Disciplinary)
+        const CROSS_SKILLS = {
+            'MOE.STEM.CROSS.COMPUTE-DECOMPOSE.001': 'פירוק בעיות',
+            'MOE.STEM.CROSS.COMPUTE-ALGO.002': 'בניית אלגוריתמים',
+            'MOE.STEM.CROSS.INFO-FILTER.001': 'איתור והערכה',
+            'MOE.STEM.CROSS.INFO-REPRESENT.002': 'ייצוג ופרשנות',
+            'MOE.STEM.CROSS.VALUE-INNOVATE.001': 'יצירת רעיונות',
+            'MOE.STEM.CROSS.VALUE-INTEGRATE.002': 'אינטגרציה של ידע',
+            'MOE.STEM.CROSS.SELF-MANAGE.001': 'ניהול למידה',
+            'MOE.STEM.CROSS.SELF-DECIDE.002': 'קבלת החלטות',
+            'MOE.STEM.CROSS.SOCIAL-COLLAB.001': 'תקשורת ושיתוף פעולה',
+            'MOE.STEM.CROSS.SOCIAL-RESOLVE.002': 'פתרון קונפליקטים'
+        };
+
+        // 2. Math Configuration
+        const MATH_CONFIG = {
+            // Note: GID is now passed from the button
+            ignoredKeys: ['questiontype', 'topic'], 
+            moeDict: {
+                // DOMAIN
+                'ALG': 'אלגברה', 'GEO': 'גיאומטריה', 'NUM': 'מספרים', 'UNC': 'אי ודאות',
+                // TOP
+                'EXPR': 'משתנים וביטויים אלגבריים', 'SIMPL': 'כינוס איברים ושוויון ביטויים', 
+                'EQNS': 'משוואות פשוטות', 'WPB': 'שאלות מילוליות פשוטות', 'WPI': 'שאלות אורייניות אינטגרטיביות', 
+                'SOLID': 'תיבות ומנסרות', 'TRI': 'משולשים ומצולעים', 'ANG': 'זוויות וישרים', 
+                'CIRC': 'קווים ומעגלים', 'COMP': 'צורות מורכבות', 'ARITH': 'חוקי חשבון', 
+                'POW': 'חזקות ושורשים', 'SGN': 'מספרים חיוביים ושליליים', 'CRD': 'מערכת הצירים', 
+                'MEAS': 'מדידות במערכת הצירים', 'DATA': 'אי ודאות',
+                // SUB
+                'VAR': 'משתנה', 'SYM': 'סימנים מתמטיים', 'TYPES': 'סוגי ביטויים/צורות', 'MODEL': 'בניית מודל מתמטי',
+                'PAT': 'חוקיות', 'LIKE': 'איברים דומים', 'SUBST': 'הצבה', 'PROP': 'חוקי חילוף/קיבוץ/פילוג',
+                'EQV': 'ביטויים שקולים', 'POWER': 'חזקה ככתיב מקוצר', 'DEF': 'הגדרה', 'MEAN': 'משמעות פתרון',
+                'CHECK': 'בדיקת פתרונות', 'VERIFY': 'אימות הצבה', 'SOLVE': 'פתרון משוואות', 'BALANCE': 'איזון משוואות',
+                'VARDEF': 'הגדרת משתנה', 'FORM': 'בניית משוואה מטקסט', 'VALID': 'בדיקת היתכנות', 'CONTEXT': 'הקשרים שונים',
+                'REASON': 'נימוק מתמטי', 'BOXPROPS': 'מאפייני תיבה', 'BOXSURF': 'שטח פנים תיבה', 'BOXVOL': 'נפח תיבה',
+                'NETS': 'פריסות', 'PRISMPROPS': 'מאפייני מנסרה', 'PRISMCOMP': 'חישובי מנסרה', 'HGT': 'גובה במשולש',
+                'AREA': 'שטח', 'PAREA': 'שטח מצולע', 'APPL': 'יישום בגיאומטריה', 'EQT': 'משולש שווה צלעות',
+                'ISO': 'משולש שווה שוקיים', 'INEQ': 'אי שוויון', 'ADJ': 'זוויות צמודות', 'VRT': 'זוויות קודקודיות',
+                'BIS': 'חוצה זווית', 'PAR': 'זוויות בין מקבילים', 'CENT': 'זווית מרכזית', 'REL': 'יחס היקף–קוטר',
+                'PI': 'חישובי מעגל', 'CRSDEF': 'הגדרת מערכת צירים', 'MAP': 'התאמת נקודות', 'PLOT': 'שרטוט נקודות',
+                'LEN': 'אורך', 'DIFF': 'הפרשים', 'TAB': 'טבלה', 'GRF': 'גרף', 'DIA': 'דיאגרמות', 'CRIT': 'קריטריון מיון', 'REP': 'ייצוגים'
+            },
+            skillsDict: {
+                ...CROSS_SKILLS,
+                'MOE.STEM.MATH.LITMATH-FORMULATE.001': 'ניסוח בעיות מתמטית',
+                'MOE.STEM.MATH.LITMATH-REPRESENT.002': 'ייצוג ומתן משמעות לתופעות מתמטיות',
+                'MOE.STEM.MATH.LITMATH-JUDGE.003': 'הערכת פתרונות מתמטיים',
+                'MOE.STEM.MATH.APPLY-TOOLS.001': 'שימוש בכלים מתמטיים',
+                'MOE.STEM.MATH.APPLY-MODEL.002': 'בניית מודלים מתמטיים',
+                'MOE.STEM.MATH.REASON-INFER.001': 'הסקת מסקנות לוגיות',
+                'MOE.STEM.MATH.REASON-JUSTIFY.002': 'נימוק טענות',
+                'MOE.STEM.MATH.TECH-COMPUTE.001': 'ביצוע חישובים',
+                'MOE.STEM.MATH.TECH-GRAPH.002': 'ניתוח של גרפים',
+                'MOE.STEM.MATH.CREATE-INNOVATE.001': 'פיתוח דרכי פתרון וייצוג חדשים',
+                'MOE.STEM.MATH.CRIT-VALIDATE.001': 'הערכת נכונות',
+                'MOE.STEM.MATH.CRIT-ERROR.002': 'זיהוי טעויות',
+                'MOE.STEM.MATH.PROBLEM-APPLY.001': 'יישום כלים מתמטיים לפתרון בעיות'
+            },
+            overrides: {
+                'SIMPL': { 'TOP': 'כינוס איברים ושוויון ביטויים', 'SUB': 'פישוט ביטויים' },
+                'MEAS': { 'TOP': 'מדידות במערכת הצירים', 'SUB': 'מדידת זוויות' },
+                'ALG': { 'DOMAIN': 'אלגברה', 'SUB': 'חישובים בזוויות' },
+                'TYPES': { 'SUB': 'סוגי ביטויים/צורות' }
+            }
+        };
+
+        // 3. Science Configuration
+        const SCIENCE_CONFIG = {
+            // Note: GID is now passed from the button
+            ignoredKeys: ['questiontype', 'wiifm'], // topic is usually shown in Science
+            moeDict: {
+                'CHEM': 'כימיה', 'PHY': 'פיזיקה', 'BIO': 'ביולוגיה', 'EARTH': 'מדעי כדור הארץ והסביבה', 'TECH': 'טכנולוגיה',
+                'MEAS': 'מידות ומדידות', 'GAS': 'גזים והאוויר', 'MATL': 'חומרים והשפעתם', 'PHASE': 'מצבי צבירה', 'PART': 'מודל החלקיקים',
+                'ENRG': 'אנרגיה', 'CONS': 'חוקי שימור', 'LIFE': 'מאפייני החיים', 'ORG': 'רמות ארגון', 'CELL': 'התא',
+                'TRANS': 'הובלה באדם', 'BLOOD': 'מערכת הדם', 'HEAL': 'בריאות ואיכות חיים', 'PLANT': 'מים בצמח', 'ECO': 'מערכות אקולוגיות',
+                'DES': 'תהליך התיכון', 'IMPT': 'השפעת הטכנולוגיה', 'VOL': 'נפח', 'MASS': 'מסה', 'WEIGHT': 'משקל', 'UNIT': 'יחידות מידה',
+                'STATE': 'מצב צבירה', 'POINT': 'נקודת התכה/רתיחה', 'RATE': 'קצב', 'DIFF': 'פעפוע', 'PRESS': 'לחץ', 'AIR': 'הרכב האוויר',
+                'OXY': 'חמצן', 'CO2': 'פחמן דו-חמצני', 'GREEN': 'אפקט החממה', 'ENV': 'סביבה', 'SUST': 'קיימות', 'TYPE': 'סוגי אנרגיה',
+                'CONV': 'המרת אנרגיה', 'FLOW': 'מעבר אנרגיה', 'DISS': 'פיזור אנרגיה', 'SYSTEM': 'מערכת', 'FUNC': 'מאפייני חיים',
+                'NEED': 'צרכים חיוניים', 'HIER': 'רמות ארגון', 'MICRO': 'מיקרוסקופ', 'STRUCT': 'מבנה', 'PLANTCELL': 'תא צמח',
+                'MAT': 'הובלת חומרים', 'SYSFUNC': 'תפקודי מערכת', 'HEART': 'לב', 'VESSEL': 'כלי דם', 'COMP': 'מרכיבים',
+                'HB': 'המוגלובין', 'IMM': 'חיסון', 'CLOT': 'קרישת דם', 'RISK': 'גורמי סיכון', 'PREV': 'מניעה', 'OSM': 'אוסמוזה',
+                'TRANSP': 'דיות', 'WILT': 'כמישה', 'INTER': 'יחסי גומלין', 'CLIM': 'שינויי אקלים', 'SCIRELS': 'מדע וטכנולוגיה',
+                'CONST': 'אילוצים', 'PLAN': 'תכנון', 'EXEC': 'ביצוע', 'PRES': 'הצגה', 'COLLAB': 'שיתופיות', 'ENVIMP': 'השפעה סביבתית'
+            },
+            skillsDict: {
+                ...CROSS_SKILLS,
+                'MOE.STEM.SCIENTIFIC.LITSCI-CONCEPTS.001': 'הבנת מושגים, תופעות ומונחים',
+                'MOE.STEM.SCIENTIFIC.LITSCI-APPLY.002': 'יישום מושגים מדעיים בהקשרים מגוונים',
+                'MOE.STEM.SCIENTIFIC.EXPLAIN-EVIDENCE.001': 'בניית הסברים מבוססי ראיות',
+                'MOE.STEM.SCIENTIFIC.EXPLAIN-DESCRIBE.002': 'תיאור תופעות במונחים מדעיים',
+                'MOE.STEM.SCIENTIFIC.INQUIRY-DESIGN.001': 'תכנון חקר וזיהוי משתנים',
+                'MOE.STEM.SCIENTIFIC.INQUIRY-VALIDATE.002': 'הערכת איכות ומהימנות של המחקר',
+                'MOE.STEM.SCIENTIFIC.ANALYZE-PATTERNS.001': 'ניתוח נתונים וזיהוי דפוסים',
+                'MOE.STEM.SCIENTIFIC.ANALYZE-INFER.002': 'גזירת מסקנות מבוססות ראיות',
+                'MOE.STEM.SCIENTIFIC.COMM-PRESENT.001': 'הצגת ממצאים בצורה ברורה',
+                'MOE.STEM.SCIENTIFIC.COMM-ARGUE.002': 'נימוק טענות על בסיס ראיות',
+                'MOE.STEM.SCIENTIFIC.EVALINFO-SOURCES.001': 'בחינת אמינות ואיכות של מידע מדעי',
+                'MOE.STEM.SCIENTIFIC.EVALINFO-DECIDE.002': 'שימוש במידע לקבלת החלטות',
+                'MOE.STEM.SCIENTIFIC.CREATE-INNOVATE.001': 'פיתוח רעיונות, ניסויים ופתרונות חדשים',
+                'MOE.STEM.SCIENTIFIC.CRIT-EVALUATE.001': 'בחינת טענות וזיהוי הטיות',
+                'MOE.STEM.SCIENTIFIC.CRIT-STRENGTH.002': 'הערכת חוזק מסקנות',
+                'MOE.STEM.SCIENTIFIC.PROBLEM-APPLY.001': 'יישום חשיבה מדעית לפתרון בעיות'
+            },
+            overrides: {} 
+        };
+
+        // --- Global State ---
+        let currentSubject = null;
+        let mainData = [];
+        let scienceIndex = {}; 
+        let skillsIndex = {};
+        let keyTranslationMap = {}; 
+        let currentIndex = 0;
+
+        // Shared Constants
+        const TECHNICAL_KEYS = ['subject', 'gradelevel', 'manufacture', 'targetsector', 'targetaudience', 'languages', 'depthlevel'];
+        const FIELD_LABELS = {
+            'title': 'כותרת', 'description': 'תיאור', 'contenttype': 'סוג תוכן', 'subject': 'תחום דעת',
+            'gradelevel': 'גיל', 'topic': 'שם נושא', 'subtopic': 'נושא ידע', 'prerequisitesubtopics': 'נושאי ידע מקדימים',
+            'skills': 'מיומנויות', 'manufacture': 'יצרן תוכן', 'priorbasedpractice': 'ידע מקדים', 'targetsector': 'אוכלוסיית יעד',
+            'targetaudience': 'קהל יעד', 'relativedifficulty': 'רמת קושי', 'depthlevel': 'רמת עומק', 'cognitivelevel': 'רמת חשיבה',
+            'languages': 'שפה', 'estimatedtimeinminutes': 'משך צפוי ללמידה', 'wiifm': 'WIIFM (אמיל"י)'
+        };
+        const VALUE_MAPS = {
+            'targetsector': { 'State (General)': 'ממלכתי', 'State (Religious)': 'ממלכתי דתי', 'Druze': 'דרוזי', 'Special Education': 'חנ"מ', 'Orthodox': 'ממלכתי חרדי' },
+            'targetaudience': { 'General': 'כללי', 'Excellent': 'מצוינות', 'Disadvantaged Populations': 'אוכלוסיות מוחלשות', 'Students with Special Needs': 'צרכים מיוחדים', 'At Risk Students': 'תלמידים בסיכון' },
+            'depthlevel': { 'Core Curriculum Basic': 'בסיסי', 'Advanced': 'מתקדם', 'Enrichment': 'העשרה' },
+            'cognitivelevel': { 'Remember': 'זכירה', 'Understand': 'הבנה', 'Apply': 'יישום', 'Analyze': 'ניתוח', 'Evaluate': 'הערכה', 'Create': 'יצירה' },
+            'languages': { 'Hebrew': 'עברית', 'English': 'אנגלית', 'Arabic': 'ערבית' }
+        };
+
+        // --- APP LOGIC ---
+
+        function showLanding() {
+            document.getElementById('app').classList.add('hidden');
+            document.getElementById('landingPage').classList.remove('hidden');
+            currentSubject = null;
+            mainData = [];
+            currentIndex = 0;
+        }
+
+        async function loadApp(subjectType, dataGid) {
+            if (!dataGid) {
+                alert('יחידה זו טרם פורסמה');
+                return;
+            }
+
+            // Assign config based on subject type
+            currentSubject = (subjectType === 'math') ? MATH_CONFIG : SCIENCE_CONFIG;
+            
+            document.getElementById('landingPage').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('error').classList.add('hidden');
+
+            try {
+                // Determine Auxiliary GIDs based on subject type
+                const subtopicsGid = SCIENCE_GID; 
+                const skillsGid = (subjectType === 'math') ? SKILLS_GID_MATH : '0'; 
+
+                const [rawData, rawScience, rawSkills, rawKeys] = await Promise.all([
+                    fetchSheetData(SHEET_ID, dataGid), // Load the specific Unit GID
+                    fetchSheetData(SCIENCE_INDEX_ID, subtopicsGid),
+                    fetchSheetData(SKILLS_INDEX_ID, skillsGid),
+                    fetchSheetData(KEYS_SHEET_ID, KEYS_GID)
+                ]);
+
+                mainData = rawData.filter(row => {
+                    const keys = Object.keys(row);
+                    return keys.some(k => row[k] && row[k].toString().trim() !== '');
+                });
+
+                scienceIndex = buildIndexMap(rawScience);
+                skillsIndex = buildIndexMap(rawSkills);
+                keyTranslationMap = buildKeyTranslationMap(rawKeys);
+
+                if (mainData.length === 0) throw new Error("לא נמצאו נתונים");
+
+                document.getElementById('loading').classList.add('hidden');
+                
+                // Initialize View
+                currentIndex = 0;
+                renderCurrentItem();
+                setupEventListeners();
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('error').classList.remove('hidden');
+                document.getElementById('errorMessage').textContent = 'שגיאה בטעינה: ' + err.message;
+            }
+        }
+
+        async function fetchSheetData(sheetId, gid) {
+            const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&tq&gid=${gid}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const text = await response.text();
+            const jsonString = text.substring(47).slice(0, -2);
+            return processGvizTable(JSON.parse(jsonString).table);
+        }
+
+        function processGvizTable(table) {
+            const headers = table.cols.map(col => col.label || 'Unknown');
+            return table.rows.map(row => {
+                const item = {};
+                row.c.forEach((cell, index) => {
+                    const header = headers[index];
+                    item[header] = cell ? (cell.v !== null ? cell.v : '') : '';
+                });
+                return item;
+            });
+        }
+
+        function buildIndexMap(data) {
+            const map = {};
+            data.forEach(row => {
+                const keys = Object.keys(row);
+                let codeKey = keys.find(k => k.toLowerCase().includes('code') || k.includes('קוד') || k.toLowerCase().includes('id')) || keys[0];
+                let valKey = keys.find(k => (k !== codeKey) && (k.includes('שם') || k.includes('Name') || k.includes('hebrew') || k.includes('עברית'))) || keys[1];
+                if (row[codeKey]) map[row[codeKey]] = row[valKey] || row[codeKey];
+            });
+            return map;
+        }
+
+        function buildKeyTranslationMap(data) {
+            const map = {};
+            data.forEach(row => {
+                const keys = Object.keys(row);
+                const enKey = row[keys[0]]; 
+                const heVal = row[keys[1]];
+                if (enKey && heVal) map[enKey.toLowerCase().trim()] = heVal;
+            });
+            return map;
+        }
+
+        function translateMoeCode(code) {
+            if (!code) return code;
+            code = code.trim();
+            const dict = currentSubject.moeDict;
+            const overrides = currentSubject.overrides || {};
+
+            // Specific overrides
+            if (code === 'TRANS') return 'מעבר מצב צבירה/הובלה באדם';
+            
+            // Direct Dictionary
+            if (dict[code]) return dict[code];
+
+            // MOE Structure
+            if (code.startsWith('MOE.')) {
+                const parts = code.split('.');
+                if (parts.length >= 5) {
+                    const domCode = parts[3];
+                    const topSub = parts[4];
+                    let translatedParts = [];
+
+                    // Domain
+                    if (overrides[domCode]?.DOMAIN) translatedParts.push(overrides[domCode].DOMAIN);
+                    else if (dict[domCode]) translatedParts.push(dict[domCode]);
+
+                    // Top/Sub
+                    if (topSub.includes('-')) {
+                        const [topCode, subCode] = topSub.split('-');
+                        
+                        // TOP
+                        if (overrides[topCode]?.TOP) translatedParts.push(overrides[topCode].TOP);
+                        else if (dict[topCode]) translatedParts.push(dict[topCode]);
+                        
+                        // SUB
+                        if (subCode === 'TRANS') translatedParts.push('מעבר מצב צבירה');
+                        else if (overrides[subCode]?.SUB) translatedParts.push(overrides[subCode].SUB);
+                        else if (dict[subCode]) translatedParts.push(dict[subCode]);
+                        else translatedParts.push(subCode);
+                    } else {
+                        if (dict[topSub]) translatedParts.push(dict[topSub]);
+                    }
+
+                    if (translatedParts.length > 0) return translatedParts.join(' > ');
+                }
+            }
+            if (scienceIndex[code]) return scienceIndex[code];
+            return code;
+        }
+
+        function renderCurrentItem() {
+            if (mainData.length === 0) return;
+            const item = mainData[currentIndex];
+            const keys = Object.keys(item);
+
+            const idKey = keys.find(k => k.toLowerCase().includes('id') || k.includes('מזהה')) || keys[0];
+            const titleKey = keys.find(k => k.toLowerCase().includes('title') || k.includes('שם')) || keys[1];
+            const linkKey = keys.find(k => k.toLowerCase().includes('link') || k.toLowerCase().includes('url') || k.includes('קישור')) || keys[2];
+            const descKey = keys.find(k => k.toLowerCase().includes('desc') || k.includes('תיאור')) || keys[3];
+
+            document.getElementById('itemId').textContent = item[idKey] || '-';
+            document.getElementById('mainHeaderTitle').textContent = item[titleKey] || 'ללא כותרת';
+            document.title = item[titleKey] || 'סייר משאבים';
+            document.getElementById('itemDesc').textContent = item[descKey] || '';
+            
+            // Update Nav Input
+            const jumpInput = document.getElementById('jumpToIndex');
+            jumpInput.value = currentIndex + 1;
+            jumpInput.max = mainData.length;
+            document.getElementById('totalItems').textContent = mainData.length;
+
+            const link = item[linkKey];
+            const iframe = document.getElementById('contentFrame');
+            const extLinkBtn = document.getElementById('externalLinkBtn');
+            
+            if (link && link.startsWith('http')) {
+                let embedLink = link;
+                if (link.includes('youtube.com/watch')) embedLink = link.replace('watch?v=', 'embed/');
+                iframe.src = embedLink;
+                extLinkBtn.href = link;
+                extLinkBtn.classList.remove('pointer-events-none', 'opacity-50');
+            } else {
+                iframe.src = 'about:blank';
+                extLinkBtn.href = '#';
+                extLinkBtn.classList.add('pointer-events-none', 'opacity-50');
+            }
+
+            const metadataList = document.getElementById('metadataList');
+            const technicalDetailsList = document.getElementById('technicalDetailsList');
+            metadataList.innerHTML = ''; 
+            technicalDetailsList.innerHTML = '';
+
+            keys.forEach(key => {
+                if ([idKey, titleKey, linkKey, descKey].includes(key)) return;
+                const rawValue = item[key];
+                if (!rawValue || rawValue.toString().trim() === '') return;
+
+                const normalizedKey = key.toLowerCase().trim();
+                
+                // Use subject specific ignored keys
+                if (currentSubject.ignoredKeys.includes(normalizedKey)) return;
+
+                const displayLabel = FIELD_LABELS[normalizedKey] || keyTranslationMap[normalizedKey] || key;
+                let displayValue = rawValue;
+                let isLinkable = false;
+
+                if (normalizedKey.includes('priorbasedpractice') || displayLabel.includes('ידע מקדים')) {
+                    const ids = String(rawValue).split(',').map(s => s.trim());
+                    const links = ids.map(id => {
+                        if (id.length > 1) {
+                             return `<button onclick="openModal('${id}')" class="text-blue-600 hover:underline inline-flex items-center gap-1 font-medium bg-blue-50 px-2 py-0.5 rounded border border-blue-100 transition-colors">${id}</button>`;
+                        }
+                        return id;
+                    });
+                    displayValue = links.join(' ');
+                    isLinkable = true;
+                }
+
+                if (!isLinkable) {
+                    const isSkills = normalizedKey.includes('skills') || displayLabel.includes('מיומנויות');
+                    const isSubtopics = normalizedKey.includes('subtopic') || displayLabel.includes('נושא ידע');
+
+                    if (isSkills || isSubtopics) {
+                         const parts = String(rawValue).split(',').map(p => p.trim());
+                         const mappedParts = parts.map(part => {
+                            let translated = part;
+                            if (isSkills) {
+                                const skillDict = currentSubject.skillsDict;
+                                if (skillDict[part]) translated = skillDict[part];
+                                else if (skillsIndex[part]) translated = skillsIndex[part];
+                            } else if (isSubtopics) {
+                                translated = translateMoeCode(part);
+                            }
+                            if (translated !== part) return `<span class="inline-block bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs font-semibold border border-blue-100 mr-1 mb-1">${translated}</span>`;
+                            return part;
+                        });
+                        displayValue = mappedParts.join(' '); 
+                    } else if (VALUE_MAPS[normalizedKey]) {
+                        const parts = String(rawValue).split(',').map(p => p.trim());
+                        displayValue = parts.map(part => VALUE_MAPS[normalizedKey][part] || part).join(', ');
+                    }
+                }
+
+                const isTechnical = TECHNICAL_KEYS.includes(normalizedKey);
+                const div = document.createElement('div');
+                
+                if (isTechnical) {
+                    div.innerHTML = `
+                        <div class="text-gray-400 text-[10px] font-medium mb-0.5 uppercase tracking-wider">${displayLabel}</div>
+                        <div class="text-gray-700 font-medium truncate" title="${String(displayValue).replace(/<[^>]*>?/gm, '')}">${displayValue}</div>
+                    `;
+                    technicalDetailsList.appendChild(div);
+                } else {
+                    div.className = "border-b border-gray-100 pb-2 last:border-0";
+                    div.innerHTML = `
+                        <div class="text-gray-500 text-xs font-medium mb-1 uppercase tracking-wider">${displayLabel}</div>
+                        <div class="text-gray-800 text-sm leading-relaxed">${displayValue}</div>
+                    `;
+                    metadataList.appendChild(div);
+                }
+            });
+            
+            document.getElementById('btnPrev').disabled = currentIndex === 0;
+            document.getElementById('btnNext').disabled = currentIndex === mainData.length - 1;
+        }
+
+        // --- Interaction Functions ---
+        function toggleTechnicalDetails() {
+            const list = document.getElementById('technicalDetailsList');
+            const icon = document.getElementById('techIcon');
+            if (list.classList.contains('hidden')) {
+                list.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                list.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function openModal(targetId) {
+            let foundItem = null;
+            for (const item of mainData) {
+                const keys = Object.keys(item);
+                const idKey = keys.find(k => k.toLowerCase().includes('id') || k.includes('מזהה')) || keys[0];
+                if (item[idKey] && item[idKey].toString().trim() === targetId.toString().trim()) {
+                    foundItem = item;
+                    break;
+                }
+            }
+            if (!foundItem) { alert('לא נמצא פריט עם מזהה זה: ' + targetId); return; }
+
+            const keys = Object.keys(foundItem);
+            const titleKey = keys.find(k => k.toLowerCase().includes('title') || k.includes('שם')) || keys[1];
+            const linkKey = keys.find(k => k.toLowerCase().includes('link') || k.toLowerCase().includes('url') || k.includes('קישור')) || keys[2];
+            const descKey = keys.find(k => k.toLowerCase().includes('desc') || k.includes('תיאור')) || keys[3];
+
+            document.getElementById('modalId').textContent = targetId;
+            document.getElementById('modalTitle').textContent = foundItem[titleKey] || 'ללא כותרת';
+            document.getElementById('modalDesc').textContent = foundItem[descKey] || '';
+            const link = foundItem[linkKey];
+            const iframe = document.getElementById('modalFrame');
+            const extLink = document.getElementById('modalExternalLink');
+            
+            if (link && link.startsWith('http')) {
+                 let embedLink = link;
+                if (link.includes('youtube.com/watch')) embedLink = link.replace('watch?v=', 'embed/');
+                iframe.src = embedLink;
+                extLink.href = link;
+                extLink.classList.remove('pointer-events-none', 'text-gray-400');
+            } else {
+                iframe.src = 'about:blank';
+                extLink.href = '#';
+                extLink.classList.add('pointer-events-none', 'text-gray-400');
+            }
+            document.getElementById('popupModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('popupModal').classList.add('hidden');
+            document.getElementById('modalFrame').src = ''; 
+        }
+
+        document.getElementById('popupModal').addEventListener('click', (e) => { if (e.target.id === 'popupModal') closeModal(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+        function setupEventListeners() {
+            const btnPrev = document.getElementById('btnPrev');
+            const btnNext = document.getElementById('btnNext');
+            
+            // Remove old listeners to avoid duplicates if re-init
+            const newPrev = btnPrev.cloneNode(true);
+            const newNext = btnNext.cloneNode(true);
+            btnPrev.parentNode.replaceChild(newPrev, btnPrev);
+            btnNext.parentNode.replaceChild(newNext, btnNext);
+
+            newPrev.addEventListener('click', () => {
+                if (currentIndex > 0) { currentIndex--; renderCurrentItem(); }
+            });
+            newNext.addEventListener('click', () => {
+                if (currentIndex < mainData.length - 1) { currentIndex++; renderCurrentItem(); }
+            });
+            
+            const jumpInput = document.getElementById('jumpToIndex');
+            const handleJump = () => {
+                let val = parseInt(jumpInput.value);
+                if (!isNaN(val) && val >= 1 && val <= mainData.length) {
+                    currentIndex = val - 1;
+                    renderCurrentItem();
+                } else {
+                    jumpInput.value = currentIndex + 1;
+                }
+            };
+            jumpInput.onchange = handleJump; // Use property to easily overwrite
+            jumpInput.onkeydown = (e) => {
+                e.stopPropagation();
+                if (e.key === 'Enter') jumpInput.blur();
+            };
+            jumpInput.onfocus = () => jumpInput.select();
+            
+            // Global keydown (only add once or manage carefully)
+            document.onkeydown = (e) => {
+                if (!document.getElementById('popupModal').classList.contains('hidden')) return;
+                if (document.getElementById('landingPage').classList.contains('hidden')) {
+                    if (e.key === 'ArrowLeft') { 
+                        if (currentIndex < mainData.length - 1) { currentIndex++; renderCurrentItem(); }
+                    }
+                    if (e.key === 'ArrowRight') {
+                        if (currentIndex > 0) { currentIndex--; renderCurrentItem(); }
+                    }
+                }
+            };
+        }
+    </script>
+</body>
+</html>
