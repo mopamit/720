@@ -366,6 +366,7 @@
             },
             skillsDict: {
                 ...CROSS_SKILLS,
+                // Mathematical Competence
                 'MOE.STEM.MATH.LITMATH-FORMULATE.001': 'ניסוח בעיות מתמטית',
                 'MOE.STEM.MATH.LITMATH-REPRESENT.002': 'ייצוג ומתן משמעות לתופעות מתמטיות',
                 'MOE.STEM.MATH.LITMATH-JUDGE.003': 'הערכת פתרונות מתמטיים',
@@ -438,10 +439,20 @@
                 'MOE.STEM.SCIENTIFIC.CRIT-STRENGTH.002': 'הערכת חוזק מסקנות',
                 'MOE.STEM.SCIENTIFIC.PROBLEM-APPLY.001': 'יישום חשיבה מדעית לפתרון בעיות',
 
-                // Mathematical Literacy in Science
+                // Mathematical Literacy in Science (sometimes used in interdisciplinary contexts)
                 'MOE.STEM.MATH.LITMATH-FORMULATE.001': 'ניסוח בעיות מתמטית',
                 'MOE.STEM.MATH.LITMATH-REPRESENT.002': 'ייצוג ומתן משמעות לתופעות מתמטיות',
-                'MOE.STEM.MATH.LITMATH-JUDGE.003': 'הערכת פתרונות מתמטיים'
+                'MOE.STEM.MATH.LITMATH-JUDGE.003': 'הערכת פתרונות מתמטיים',
+                'MOE.STEM.MATH.APPLY-TOOLS.001': 'שימוש בכלים מתמטיים',
+                'MOE.STEM.MATH.APPLY-MODEL.002': 'בניית מודלים מתמטיים',
+                'MOE.STEM.MATH.REASON-INFER.001': 'הסקת מסקנות לוגיות',
+                'MOE.STEM.MATH.REASON-JUSTIFY.002': 'נימוק טענות',
+                'MOE.STEM.MATH.TECH-COMPUTE.001': 'ביצוע חישובים',
+                'MOE.STEM.MATH.TECH-GRAPH.002': 'ניתוח של גרפים',
+                'MOE.STEM.MATH.CREATE-INNOVATE.001': 'פיתוח דרכי פתרון וייצוג חדשים',
+                'MOE.STEM.MATH.CRIT-VALIDATE.001': 'הערכת נכונות',
+                'MOE.STEM.MATH.CRIT-ERROR.002': 'זיהוי טעויות',
+                'MOE.STEM.MATH.PROBLEM-APPLY.001': 'יישום כלים מתמטיים לפתרון בעיות'
             },
             overrides: {} 
         };
@@ -455,14 +466,16 @@
         let currentIndex = 0;
 
         // Shared Constants
-        const TECHNICAL_KEYS = ['subject', 'gradelevel', 'manufacture', 'targetsector', 'targetaudience', 'languages', 'depthlevel'];
+        const TECHNICAL_KEYS = ['subject', 'gradelevel', 'manufacture', 'targetsector', 'targetaudience', 'languages', 'depthlevel', 'mediaformat', 'updatedat', 'createdat'];
         const FIELD_LABELS = {
-            'title': 'כותרת', 'description': 'תיאור', 'contenttype': 'סוג תוכן', 'subject': 'תחום דעת',
-            'gradelevel': 'גיל', 'topic': 'שם נושא', 'subtopic': 'נושא ידע', 'prerequisitesubtopics': 'נושאי ידע מקדימים',
-            'skills': 'מיומנויות', 'manufacture': 'יצרן תוכן', 'priorbasedpractice': 'ידע מקדים', 'targetsector': 'אוכלוסיית יעד',
-            'targetaudience': 'קהל יעד', 'relativedifficulty': 'רמת קושי', 'depthlevel': 'רמת עומק', 'cognitivelevel': 'רמת חשיבה',
-            'languages': 'שפה', 'estimatedtimeinminutes': 'משך צפוי ללמידה', 'wiifm': 'WIIFM (אמיל"י)',
-            'prerequisitecontents': 'תכנים מקדימים'
+            'id': 'מזהה', 'תת פרק': 'תת פרק', 'title': 'כותרת', 'description': 'תיאור', 'contenttype': 'סוג תוכן', 
+            'questiontype': 'סוג שאלה', 'mediaformat': 'פורמט מדיה', 'subject': 'תחום דעת', 'gradelevel': 'גיל', 
+            'topic': 'שם נושא', 'subtopic': 'נושא ידע', 'prerequisitesubtopics': 'נושאי ידע מקדימים', 'skills': 'מיומנויות', 
+            'manufacture': 'יצרן תוכן', 'priorbasedpractice': 'ידע מקדים', 'targetsector': 'אוכלוסיית יעד', 
+            'targetaudience': 'קהל יעד', 'relativedifficulty': 'רמת קושי', 'depthlevel': 'רמת עומק', 
+            'cognitivelevel': 'רמת חשיבה', 'languages': 'שפה', 'estimatedtimeinminutes': 'משך צפוי ללמידה', 
+            'wiifm': 'WIIFM (אמיל"י)', 'prerequisitecontents': 'תכנים מקדימים', 'dependencies': 'תלויות',
+            'url': 'קישור', 'updatedat': 'תאריך עדכון', 'createdat': 'תאריך יצירה'
         };
         const VALUE_MAPS = {
             'targetsector': { 'State (General)': 'ממלכתי', 'State (Religious)': 'ממלכתי דתי', 'Druze': 'דרוזי', 'Special Education': 'חנ"מ', 'Orthodox': 'ממלכתי חרדי' },
@@ -534,7 +547,8 @@
         }
 
         async function fetchSheetData(sheetId, gid) {
-            const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&tq&gid=${gid}`;
+            // הוספת headers=1 כדי להכריח את גוגל לקרוא את הכותרות
+            const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&headers=1&gid=${gid}`;
             const response = await fetch(url);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const text = await response.text();
@@ -543,13 +557,38 @@
         }
 
         function processGvizTable(table) {
-            const headers = table.cols.map(col => col.label || 'Unknown');
-            return table.rows.map(row => {
+            // ניסיון ראשון: קריאת הכותרות הרשמיות שחזרו מהטבלה
+            let headers = table.cols.map(col => col.label ? col.label.toString().trim() : '');
+            let dataRows = table.rows;
+
+            // אם הכותרות ריקות (פחות מ-3 כותרות תקינות), נחפש ידנית את שורת הכותרות בתוך הנתונים
+            if (headers.filter(h => h !== '').length < 3 && dataRows.length > 0) {
+                let headerRowIndex = 0;
+                // מחפשים את השורה הראשונה שיש בה לפחות 3 ערכים (זו בטח שורת הכותרות)
+                for (let i = 0; i < dataRows.length; i++) {
+                    if (!dataRows[i].c) continue;
+                    const rowVals = dataRows[i].c.filter(cell => cell && cell.v !== null && cell.v.toString().trim() !== '');
+                    if (rowVals.length >= 3) {
+                        headerRowIndex = i;
+                        headers = dataRows[i].c.map(cell => cell ? (cell.v !== null ? cell.v.toString().trim() : '') : '');
+                        break;
+                    }
+                }
+                // חותכים את הנתונים כדי להתחיל רק מהשורה שאחרי הכותרות
+                dataRows = dataRows.slice(headerRowIndex + 1);
+            }
+
+            // מילוי שמות גנריים לעמודות ריקות כדי למנוע דריסת נתונים
+            headers = headers.map((h, i) => h || `Column${i}`);
+
+            return dataRows.map(row => {
                 const item = {};
-                row.c.forEach((cell, index) => {
-                    const header = headers[index];
-                    item[header] = cell ? (cell.v !== null ? cell.v : '') : '';
-                });
+                if (row.c) {
+                    row.c.forEach((cell, index) => {
+                        const header = headers[index];
+                        item[header] = cell ? (cell.v !== null ? cell.v : '') : '';
+                    });
+                }
                 return item;
             });
         }
@@ -705,7 +744,6 @@
                 const displayLabel = FIELD_LABELS[normalizedKey] || keyTranslationMap[normalizedKey] || key;
                 let displayValue = rawValue;
                 let isLinkable = false;
-                let isNewTabLink = false;
 
                 // Handle Prerequisites (ID based)
                 if (normalizedKey.includes('priorbasedpractice') || displayLabel.includes('ידע מקדים')) {
@@ -720,8 +758,9 @@
                     isLinkable = true;
                 }
                 
-                // Handle Prerequisite CONTENTS (Link based - new tab)
-                else if (normalizedKey.includes('prerequisitecontents') || displayLabel.includes('תכנים מקדימים')) {
+                // Handle Prerequisite CONTENTS and DEPENDENCIES (Link based - new tab)
+                else if (normalizedKey.includes('prerequisitecontents') || displayLabel.includes('תכנים מקדימים') || 
+                         normalizedKey.includes('dependencies') || displayLabel.includes('תלויות')) {
                     const ids = String(rawValue).split(',').map(s => s.trim());
                     const links = ids.map(id => {
                         if (id.length > 1) {
