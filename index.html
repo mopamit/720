@@ -106,6 +106,9 @@
                         <button onclick="loadApp('math', '727691230')" class="unit-btn bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 font-medium py-2 px-4 rounded-lg border border-blue-100 transition-colors">
                             יחידה 3
                         </button>
+                        <button onclick="loadApp('math', '967655535')" class="unit-btn bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 font-medium py-2 px-4 rounded-lg border border-blue-100 transition-colors">
+                            יחידה 4
+                        </button>
                     </div>
                 </div>
 
@@ -124,8 +127,11 @@
                         <button onclick="loadApp('science', '1851687208')" class="unit-btn bg-green-50 hover:bg-green-600 hover:text-white text-green-700 font-medium py-2 px-4 rounded-lg border border-green-100 transition-colors">
                             יחידה 2
                         </button>
-                         <button onclick="loadApp('science', '722631048')" class="unit-btn bg-green-50 hover:bg-green-600 hover:text-white text-green-700 font-medium py-2 px-4 rounded-lg border border-green-100 transition-colors">
+                        <button onclick="loadApp('science', '722631048')" class="unit-btn bg-green-50 hover:bg-green-600 hover:text-white text-green-700 font-medium py-2 px-4 rounded-lg border border-green-100 transition-colors">
                             יחידה 3
+                        </button>
+                        <button onclick="loadApp('science', '1583324741')" class="unit-btn bg-green-50 hover:bg-green-600 hover:text-white text-green-700 font-medium py-2 px-4 rounded-lg border border-green-100 transition-colors">
+                            יחידה 4
                         </button>
                     </div>
                 </div>
@@ -250,20 +256,22 @@
         const KEYS_SHEET_ID = '12PT72SuTLmt_ayAibMk9r4bEHrFUY10XCvFyc8605Eg';
         const KEYS_GID = '911902053';
         
-        // OLD INDICES (Fallback / Structure)
+        // INDICES GIDs
         const SCIENCE_INDEX_ID = '1gqeucmOSQIi565kIoG1hUzOpT4VOriz6ehJfBbc8Ndo';
-        const SCIENCE_GID = '0'; // Subtopics GID for Science
+        const SCIENCE_GID_1 = '0';
+        const SCIENCE_GID_2 = '1301855230';
         
         const SKILLS_INDEX_ID = '1FlAzcibPOItnXUyTgN7Jmb-Kzm006K54qkrTNX7cdUQ';
-        const SKILLS_GID_MATH = '1661050144';
+        const SKILLS_GID_1 = '0';
+        const SKILLS_GID_2 = '1661050144';
         
-        // NEW INDICES
         const MATH_INDEX_ID = '1Hv-Kl5P6uQtcMUN42jdF_lQt6tHNP_G3jOhS9Eq_ugo';
-        const MATH_INDEX_GID = '1357646660';
+        const MATH_GID_1 = '0';
+        const MATH_GID_2 = '1357646660';
 
         // --- SUBJECT CONFIGURATIONS ---
         
-        // 1. Shared Dictionaries (Cross-Disciplinary)
+        // 1. Shared Dictionaries (Cross-Disciplinary) Fallback
         const CROSS_SKILLS = {
             'MOE.STEM.CROSS.COMPUTE-DECOMPOSE.001': 'פירוק בעיות',
             'MOE.STEM.CROSS.COMPUTE-ALGO.002': 'בניית אלגוריתמים',
@@ -281,7 +289,8 @@
         const MATH_CONFIG = {
             ignoredKeys: ['questiontype', 'topic', 'נושא'], 
             indexSheetId: MATH_INDEX_ID,
-            indexGid: MATH_INDEX_GID,
+            indexGid1: MATH_GID_1,
+            indexGid2: MATH_GID_2,
             moeDict: { 
                 'ALG': 'אלגברה', 'GEO': 'גיאומטריה', 'NUM': 'מספרים', 'UNC': 'אי ודאות',
                 'VAR': 'משתנה', 'SYM': 'סימנים מתמטיים' 
@@ -388,7 +397,8 @@
         const SCIENCE_CONFIG = {
             ignoredKeys: ['questiontype', 'wiifm'], 
             indexSheetId: SCIENCE_INDEX_ID,
-            indexGid: '0', 
+            indexGid1: SCIENCE_GID_1,
+            indexGid2: SCIENCE_GID_2,
             moeDict: { 
                 // DOMAINS
                 'CHEM': 'כימיה', 'PHY': 'פיזיקה', 'BIO': 'ביולוגיה', 'EARTH': 'מדעי כדור הארץ והסביבה', 'TECH': 'טכנולוגיה',
@@ -442,17 +452,7 @@
                 // Mathematical Literacy in Science (sometimes used in interdisciplinary contexts)
                 'MOE.STEM.MATH.LITMATH-FORMULATE.001': 'ניסוח בעיות מתמטית',
                 'MOE.STEM.MATH.LITMATH-REPRESENT.002': 'ייצוג ומתן משמעות לתופעות מתמטיות',
-                'MOE.STEM.MATH.LITMATH-JUDGE.003': 'הערכת פתרונות מתמטיים',
-                'MOE.STEM.MATH.APPLY-TOOLS.001': 'שימוש בכלים מתמטיים',
-                'MOE.STEM.MATH.APPLY-MODEL.002': 'בניית מודלים מתמטיים',
-                'MOE.STEM.MATH.REASON-INFER.001': 'הסקת מסקנות לוגיות',
-                'MOE.STEM.MATH.REASON-JUSTIFY.002': 'נימוק טענות',
-                'MOE.STEM.MATH.TECH-COMPUTE.001': 'ביצוע חישובים',
-                'MOE.STEM.MATH.TECH-GRAPH.002': 'ניתוח של גרפים',
-                'MOE.STEM.MATH.CREATE-INNOVATE.001': 'פיתוח דרכי פתרון וייצוג חדשים',
-                'MOE.STEM.MATH.CRIT-VALIDATE.001': 'הערכת נכונות',
-                'MOE.STEM.MATH.CRIT-ERROR.002': 'זיהוי טעויות',
-                'MOE.STEM.MATH.PROBLEM-APPLY.001': 'יישום כלים מתמטיים לפתרון בעיות'
+                'MOE.STEM.MATH.LITMATH-JUDGE.003': 'הערכת פתרונות מתמטיים'
             },
             overrides: {} 
         };
@@ -510,13 +510,13 @@
             document.getElementById('error').classList.add('hidden');
 
             try {
-                // Determine Auxiliary GIDs based on subject type
-                const skillsGid = (subjectType === 'math') ? SKILLS_GID_MATH : '0'; 
-
-                const [rawData, rawSubtopics, rawSkills, rawKeys] = await Promise.all([
-                    fetchSheetData(SHEET_ID, dataGid), // Load the specific Unit GID
-                    fetchSheetData(currentSubject.indexSheetId, currentSubject.indexGid), // Load Configured Index (Math or Science)
-                    fetchSheetData(SKILLS_INDEX_ID, skillsGid),
+                // Fetch Data, Subject Indices (Both GIDs), Skill Indices (Both GIDs), and Keys simultaneously
+                const [rawData, rawSubtopics1, rawSubtopics2, rawSkills1, rawSkills2, rawKeys] = await Promise.all([
+                    fetchSheetData(SHEET_ID, dataGid), 
+                    fetchSheetData(currentSubject.indexSheetId, currentSubject.indexGid1), 
+                    fetchSheetData(currentSubject.indexSheetId, currentSubject.indexGid2), 
+                    fetchSheetData(SKILLS_INDEX_ID, SKILLS_GID_1),
+                    fetchSheetData(SKILLS_INDEX_ID, SKILLS_GID_2),
                     fetchSheetData(KEYS_SHEET_ID, KEYS_GID)
                 ]);
 
@@ -525,11 +525,12 @@
                     return keys.some(k => row[k] && row[k].toString().trim() !== '');
                 });
 
-                subtopicsIndex = buildIndexMap(rawSubtopics);
-                skillsIndex = buildIndexMap(rawSkills);
+                // Merge the dynamically fetched indices into smart dictionaries
+                subtopicsIndex = { ...buildIndexMap(rawSubtopics1), ...buildIndexMap(rawSubtopics2) };
+                skillsIndex = { ...buildIndexMap(rawSkills1), ...buildIndexMap(rawSkills2) };
                 keyTranslationMap = buildKeyTranslationMap(rawKeys);
 
-                if (mainData.length === 0) throw new Error("לא נמצאו נתונים");
+                if (mainData.length === 0) throw new Error("לא נמצאו נתונים או שהגיליון ריק");
 
                 document.getElementById('loading').classList.add('hidden');
                 
@@ -547,7 +548,7 @@
         }
 
         async function fetchSheetData(sheetId, gid) {
-            // הוספת headers=1 כדי להכריח את גוגל לקרוא את הכותרות
+            // הוספת headers=1 כדי להכריח את גוגל לקרוא את הכותרות ולמנוע עמודות ריקות בגיליונות מסוימים
             const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&headers=1&gid=${gid}`;
             const response = await fetch(url);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -623,7 +624,7 @@
             if (!code) return code;
             code = code.trim();
             const dict = currentSubject.moeDict;
-            const fullDict = currentSubject.fullCodeDict; // Add this
+            const fullDict = currentSubject.fullCodeDict; 
 
             // 1. Try Full Code Dictionary (Exact Match for full codes)
             if (fullDict && fullDict[code]) return fullDict[code];
@@ -640,10 +641,10 @@
                 for (let i = 3; i < parts.length; i++) {
                     const part = parts[i];
                     
-                    // NEW CHECK: Look for compound part in dict first (e.g. "TYPE-ENER")
+                    // Look for compound part in dict first (e.g. "TYPE-ENER")
                     if (dict[part]) {
                         components.push(dict[part]);
-                        continue; // Skip splitting if full part found
+                        continue; 
                     }
 
                     // Handle TOP-SUB logic via splitting if not found
@@ -817,10 +818,18 @@
                     technicalDetailsList.appendChild(div);
                 } else {
                     div.className = "border-b border-gray-100 pb-2 last:border-0";
-                    div.innerHTML = `
-                        <div class="text-gray-500 text-xs font-medium mb-1 uppercase tracking-wider">${displayLabel}</div>
-                        <div class="text-gray-800 text-sm leading-relaxed">${displayValue}</div>
-                    `;
+                    // Special styling for prominent non-technical fields like "תת פרק"
+                    if (normalizedKey === 'תת פרק') {
+                        div.innerHTML = `
+                            <div class="text-blue-500 text-xs font-bold mb-1 uppercase tracking-wider">${displayLabel}</div>
+                            <div class="text-blue-800 text-lg font-bold leading-relaxed">${displayValue}</div>
+                        `;
+                    } else {
+                        div.innerHTML = `
+                            <div class="text-gray-500 text-xs font-medium mb-1 uppercase tracking-wider">${displayLabel}</div>
+                            <div class="text-gray-800 text-sm leading-relaxed">${displayValue}</div>
+                        `;
+                    }
                     metadataList.appendChild(div);
                 }
             });
